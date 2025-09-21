@@ -1,9 +1,20 @@
+import { Route, Routes } from 'react-router';
+import Layout from './Layout';
+import Home from './pages/Home';
+import Movies from './pages/Movies';
+import TvShows from './pages/TvShows';
+import People from './pages/People';
+
 function App() {
   return (
-    <h1 className="text-3xl font-bold ">
-      A React + TypeScript app that lets users search, browse, and view details
-      about movies using the TMDb API.
-    </h1>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="movies" element={<Movies />} />
+        <Route path="tv-shows" element={<TvShows />} />
+        <Route path="people" element={<People />} />
+      </Route>
+    </Routes>
   );
 }
 
