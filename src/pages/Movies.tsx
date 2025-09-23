@@ -11,10 +11,67 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { getMovieGenres, getMovies } from '@/services/movies.service';
+import type { Movie } from '@/types/movies';
 import { Calendar, Clapperboard, Flame, PlayCircle, Star } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { LuSearch } from 'react-icons/lu';
 
 export default function Movies() {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [genres, setGenres] = useState<Record<number, string>>({});
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  //fetch movies
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setLoading(true);
+        setErrorMessage('');
+
+        const response = await getMovies();
+
+        if (response.status === 200) {
+          setMovies(response.data.results);
+        } else {
+          setErrorMessage("Could't fetch the movies");
+        }
+      } catch (error) {
+        console.log(error);
+        setErrorMessage('Something went wrong while getting the movies :(');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  //  fetch movie genres
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await getMovieGenres();
+
+        if (response.status === 200) {
+          const genreMap: Record<number, string> = {};
+          response.data.genres.forEach(
+            (genre: { id: number; name: string }) => {
+              genreMap[genre.id] = genre.name;
+            }
+          );
+
+          setGenres(genreMap);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
+
   const filters = [
     { value: 'all', label: 'All Movies', icon: <Clapperboard /> },
     { value: 'now-playing', label: 'Now Playing', icon: <PlayCircle /> },
@@ -22,6 +79,7 @@ export default function Movies() {
     { value: 'top-rated', label: 'Top Rated', icon: <Star /> },
     { value: 'upcoming', label: 'Upcoming', icon: <Calendar /> },
   ];
+
   return (
     <div className="flex flex-col gap-8 p-4 my-4">
       {/* search */}
@@ -119,17 +177,23 @@ export default function Movies() {
       </div>
 
       {/* list of movies */}
+      {loading && !errorMessage && <span>Loading...</span>}
 
-      <div className="w-full justify-center grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
-        <MovieCard />
-        <MovieCard />
-        <MovieCard />
-        <MovieCard />
-        <MovieCard />
-        <MovieCard />
-        <MovieCard />
-        <MovieCard />
-      </div>
+      {!loading && errorMessage && (
+        <span className="text-red-500">{errorMessage}</span>
+      )}
+
+      {!loading && !errorMessage && movies.length === 0 && (
+        <span>No movies found.</span>
+      )}
+
+      {!loading && !errorMessage && movies.length > 0 && (
+        <div className="w-full justify-center grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+          {movies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} genres={genres} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
