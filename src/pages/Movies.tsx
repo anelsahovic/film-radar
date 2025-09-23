@@ -1,30 +1,27 @@
+import GenreSelection from '@/components/GenreSelection';
 import MovieCard from '@/components/MovieCard';
+import SortBySelection from '@/components/SortBySelection';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+
 import {
   getFilteredMovies,
   getMovieGenres,
   getMovies,
 } from '@/services/movies.service';
-import type { Movie } from '@/types/movies';
+import type { Genre, Movie } from '@/types/movies';
 import { Calendar, Clapperboard, Flame, PlayCircle, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { LuSearch } from 'react-icons/lu';
 
 export default function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [genres, setGenres] = useState<Record<number, string>>({});
+  const [genres, setGenres] = useState<Genre[]>();
+  const [genresMap, setGenresMap] = useState<Record<number, string>>({});
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [sortingValue, setSortingValue] = useState('default');
+  const [selectedGenre, setSelectedGenre] = useState('default');
   const [pageTitle, setPageTitle] = useState('All Movies');
   const [pageSubtitle, setPageSubtitle] = useState('List of all movies');
   const [loading, setLoading] = useState(false);
@@ -37,9 +34,19 @@ export default function Movies() {
         setLoading(true);
         setErrorMessage('');
 
+        // find and set movie filter
+        const foundFilter = filters.find(
+          (item) => item.value === selectedFilter
+        );
+        if (foundFilter) {
+          setPageTitle(foundFilter.label);
+          setPageSubtitle(foundFilter.description);
+        }
+
+        // fetch movies based on filter
         const response =
           selectedFilter === 'all'
-            ? await getMovies()
+            ? await getMovies(sortingValue, selectedGenre)
             : await getFilteredMovies(selectedFilter);
 
         if (response.status === 200) {
@@ -56,7 +63,8 @@ export default function Movies() {
     };
 
     fetchMovies();
-  }, [selectedFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFilter, sortingValue, selectedGenre]);
 
   //  fetch movie genres
   useEffect(() => {
@@ -65,6 +73,7 @@ export default function Movies() {
         const response = await getMovieGenres();
 
         if (response.status === 200) {
+          setGenres(response.data.genres);
           const genreMap: Record<number, string> = {};
           response.data.genres.forEach(
             (genre: { id: number; name: string }) => {
@@ -72,7 +81,7 @@ export default function Movies() {
             }
           );
 
-          setGenres(genreMap);
+          setGenresMap(genreMap);
         }
       } catch (error) {
         console.log(error);
@@ -84,12 +93,6 @@ export default function Movies() {
 
   const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
-
-    const selected = filters.find((item) => item.value === filter);
-    if (selected) {
-      setPageTitle(selected.label);
-      setPageSubtitle(selected.description);
-    }
   };
 
   const filters = [
@@ -150,8 +153,9 @@ export default function Movies() {
       <div className="w-full flex justify-center">
         <RadioGroup
           defaultValue="all"
-          className="flex justify-center flex-wrap items-center gap-8 border-b pb-4 sm:pb-0 border-border"
+          value={selectedFilter}
           onValueChange={(value) => handleFilterChange(value)}
+          className="flex justify-center flex-wrap items-center gap-8 border-b pb-4 sm:pb-0 border-border"
         >
           {filters.map((filter) => (
             <div key={filter.value} className="relative pb-2">
@@ -193,36 +197,22 @@ export default function Movies() {
         <div className="flex flex-col sm:flex-row w-full sm:w-fit max-w-lg items-center p-2 gap-2">
           {/* genre selection */}
           <div className="w-full sm:flex sm:justify-end">
-            <SelectGroup>
-              <SelectLabel>Genre</SelectLabel>
-              <Select>
-                <SelectTrigger className="w-full sm:w-[120px]">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
-            </SelectGroup>
+            <GenreSelection
+              genres={genres || []}
+              selectedGenre={selectedGenre}
+              setSelectedGenre={setSelectedGenre}
+              setSelectedFilter={setSelectedFilter}
+            />
           </div>
 
           {/* sort by selection */}
           <div className="w-full sm:flex sm:justify-end">
-            <SelectGroup>
-              <SelectLabel>Sort by</SelectLabel>
-              <Select>
-                <SelectTrigger className="w-full sm:w-[120px]">
-                  <SelectValue placeholder="Default" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
-            </SelectGroup>
+            <SortBySelection
+              type="movie"
+              sortingValue={sortingValue}
+              setSortingValue={setSortingValue}
+              setSelectedFilter={setSelectedFilter}
+            />
           </div>
         </div>
       </div>
@@ -241,7 +231,7 @@ export default function Movies() {
       {!loading && !errorMessage && movies.length > 0 && (
         <div className="w-full justify-center grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
           {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} genres={genres} />
+            <MovieCard key={movie.id} movie={movie} genres={genresMap} />
           ))}
         </div>
       )}

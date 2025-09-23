@@ -36,7 +36,9 @@ export default function MovieCard({ movie, genres }: Props) {
         <div className="mt-2">
           <span className="text-sm text-white">Release date: </span>
           <span className="font-semibold text-sm text-white">
-            {format(movie.release_date, 'dd/MM/yyyy')}
+            {movie.release_date
+              ? format(movie.release_date, 'dd/MM/yyyy')
+              : 'N/A'}
           </span>
         </div>
 
@@ -66,7 +68,7 @@ export default function MovieCard({ movie, genres }: Props) {
           {movie.title}
         </span>
         <span className="text-white font-extrabold text-sm">
-          {getYear(movie.release_date)}
+          {movie.release_date ? getYear(movie.release_date) : 'N/A'}
         </span>
       </div>
     </Link>
