@@ -102,7 +102,7 @@ body {
 .dark {
   /* Dark mode base */
   --background: oklch(0.15 0.02 275); /* deep navy */
-  --foreground: oklch(0.98 0.01 285); /* off-white text */
+  --foreground: oklch(96.528% 0.01914 298.922); /* off-white text */
 
   --card: var(--background);
   --card-foreground: var(--foreground);
@@ -152,5 +152,90 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Loader container */
+.loader {
+  width: 70px;
+  height: 60px;
+  position: relative;
+  margin: 40px auto;
+}
+
+/* Clapper top */
+.clapper {
+  width: 100%;
+  height: 20px;
+  background: var(--primary);
+  border-radius: var(--radius);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: left bottom;
+  animation: clap 1s infinite alternate ease-in-out;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Stripes inside clapper */
+.clapper::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--primary),
+    var(--primary) 12px,
+    var(--primary-foreground) 12px,
+    var(--primary-foreground) 24px
+  );
+  top: 0;
+  left: 0;
+}
+
+/* Bottom board */
+.board {
+  width: 100%;
+  height: 38px;
+  background: var(--foreground);
+  border-radius: var(--radius);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+}
+
+/* Simulated film holes inside board */
+.board::before,
+.board::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: var(--background);
+  border-radius: 50%;
+}
+
+.board::before {
+  margin-left: 0;
+}
+
+.board::after {
+  margin-right: 0;
+}
+
+/* Animation for clapper top */
+@keyframes clap {
+  from {
+    transform: rotate(-20deg);
+  }
+  to {
+    transform: rotate(0deg);
   }
 }

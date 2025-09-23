@@ -1,5 +1,9 @@
+import ErrorMessage from '@/components/ErrorMessage';
 import GenreSelection from '@/components/GenreSelection';
+import Loader from '@/components/Loader';
 import MovieCard from '@/components/MovieCard';
+import NoResults from '@/components/NoResults';
+import PagePagination from '@/components/PagePagination';
 import SortBySelection from '@/components/SortBySelection';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +28,8 @@ export default function Movies() {
   const [selectedGenre, setSelectedGenre] = useState('default');
   const [pageTitle, setPageTitle] = useState('All Movies');
   const [pageSubtitle, setPageSubtitle] = useState('List of all movies');
+  const [pageNumber, setPageNumber] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -46,11 +52,13 @@ export default function Movies() {
         // fetch movies based on filter
         const response =
           selectedFilter === 'all'
-            ? await getMovies(sortingValue, selectedGenre)
-            : await getFilteredMovies(selectedFilter);
+            ? await getMovies(sortingValue, selectedGenre, pageNumber)
+            : await getFilteredMovies(selectedFilter, pageNumber);
 
         if (response.status === 200) {
           setMovies(response.data.results);
+          setPageNumber(response.data.page);
+          setTotalPages(Math.min(response.data.total_pages, 500));
         } else {
           setErrorMessage("Could't fetch the movies");
         }
@@ -64,7 +72,7 @@ export default function Movies() {
 
     fetchMovies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilter, sortingValue, selectedGenre]);
+  }, [selectedFilter, sortingValue, selectedGenre, pageNumber]);
 
   //  fetch movie genres
   useEffect(() => {
@@ -91,8 +99,16 @@ export default function Movies() {
     fetchGenres();
   }, []);
 
+  // reset page to 1 when filters/sorting/genre changes
+  useEffect(() => {
+    setPageNumber(1);
+  }, [selectedFilter, sortingValue, selectedGenre]);
+
   const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
+    setSelectedGenre('default');
+    setSortingValue('default');
+    setPageNumber(1);
   };
 
   const filters = [
@@ -218,14 +234,12 @@ export default function Movies() {
       </div>
 
       {/* list of movies */}
-      {loading && !errorMessage && <span>Loading...</span>}
+      {loading && !errorMessage && <Loader />}
 
-      {!loading && errorMessage && (
-        <span className="text-red-500">{errorMessage}</span>
-      )}
+      {!loading && errorMessage && <ErrorMessage message={errorMessage} />}
 
       {!loading && !errorMessage && movies.length === 0 && (
-        <span>No movies found.</span>
+        <NoResults type="people" />
       )}
 
       {!loading && !errorMessage && movies.length > 0 && (
@@ -235,6 +249,15 @@ export default function Movies() {
           ))}
         </div>
       )}
+
+      {/* pagination */}
+      <div className="my-2">
+        <PagePagination
+          totalPages={totalPages}
+          pageNumber={pageNumber}
+          setPageNumber={setPageNumber}
+        />
+      </div>
     </div>
   );
 }

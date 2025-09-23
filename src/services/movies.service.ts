@@ -1,7 +1,9 @@
 import api from './axios';
 
-export const getMovies = async (sort: string, genre: string) => {
-  const params = new URLSearchParams();
+export const getMovies = async (sort: string, genre: string, page: number) => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+  });
 
   if (sort !== 'default') {
     params.append('sort_by', sort);
@@ -9,11 +11,17 @@ export const getMovies = async (sort: string, genre: string) => {
   if (genre !== 'default') {
     params.append('with_genres', genre);
   }
+
   return await api.get(`/discover/movie?${params.toString()}`);
 };
 
-export const getFilteredMovies = async (filter: string) => {
-  return await api.get(`/movie/${filter}`);
+export const getFilteredMovies = async (filter: string, page: number) => {
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append('page', page.toString());
+  }
+  return await api.get(`/movie/${filter}?${params}`);
 };
 
 export const getMovieGenres = async () => {

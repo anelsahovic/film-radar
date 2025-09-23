@@ -9,7 +9,7 @@ import {
 } from './ui/select';
 
 type Props = {
-  type: 'movie' | 'tv_show';
+  type: 'movie' | 'tv';
   sortingValue: string;
   setSortingValue: (value: string) => void;
   setSelectedFilter?: (value: string) => void;
@@ -64,7 +64,7 @@ export default function SortBySelection({
                 {selection.label}
               </SelectItem>
             ))
-          ) : type === 'tv_show' ? (
+          ) : type === 'tv' ? (
             tvShowSelection.map((selection) => (
               <SelectItem key={selection.value} value={selection.value}>
                 {selection.label}
