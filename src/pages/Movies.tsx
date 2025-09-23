@@ -11,7 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getMovieGenres, getMovies } from '@/services/movies.service';
+import {
+  getFilteredMovies,
+  getMovieGenres,
+  getMovies,
+} from '@/services/movies.service';
 import type { Movie } from '@/types/movies';
 import { Calendar, Clapperboard, Flame, PlayCircle, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -20,6 +24,9 @@ import { LuSearch } from 'react-icons/lu';
 export default function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<Record<number, string>>({});
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [pageTitle, setPageTitle] = useState('All Movies');
+  const [pageSubtitle, setPageSubtitle] = useState('List of all movies');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -30,7 +37,10 @@ export default function Movies() {
         setLoading(true);
         setErrorMessage('');
 
-        const response = await getMovies();
+        const response =
+          selectedFilter === 'all'
+            ? await getMovies()
+            : await getFilteredMovies(selectedFilter);
 
         if (response.status === 200) {
           setMovies(response.data.results);
@@ -46,7 +56,7 @@ export default function Movies() {
     };
 
     fetchMovies();
-  }, []);
+  }, [selectedFilter]);
 
   //  fetch movie genres
   useEffect(() => {
@@ -72,12 +82,47 @@ export default function Movies() {
     fetchGenres();
   }, []);
 
+  const handleFilterChange = (filter: string) => {
+    setSelectedFilter(filter);
+
+    const selected = filters.find((item) => item.value === filter);
+    if (selected) {
+      setPageTitle(selected.label);
+      setPageSubtitle(selected.description);
+    }
+  };
+
   const filters = [
-    { value: 'all', label: 'All Movies', icon: <Clapperboard /> },
-    { value: 'now-playing', label: 'Now Playing', icon: <PlayCircle /> },
-    { value: 'trending', label: 'Trending', icon: <Flame /> },
-    { value: 'top-rated', label: 'Top Rated', icon: <Star /> },
-    { value: 'upcoming', label: 'Upcoming', icon: <Calendar /> },
+    {
+      value: 'all',
+      label: 'All Movies',
+      description: 'Explore every movie in our collection',
+      icon: <Clapperboard />,
+    },
+    {
+      value: 'now_playing',
+      label: 'Now Playing',
+      description: 'Catch the latest releases in theaters',
+      icon: <PlayCircle />,
+    },
+    {
+      value: 'popular',
+      label: 'Popular',
+      description: 'Trending films loved by audiences',
+      icon: <Flame />,
+    },
+    {
+      value: 'top_rated',
+      label: 'Top Rated',
+      description: 'Critically acclaimed and fan favorites',
+      icon: <Star />,
+    },
+    {
+      value: 'upcoming',
+      label: 'Upcoming',
+      description: 'Get a sneak peek of what’s next',
+      icon: <Calendar />,
+    },
   ];
 
   return (
@@ -106,6 +151,7 @@ export default function Movies() {
         <RadioGroup
           defaultValue="all"
           className="flex justify-center flex-wrap items-center gap-8 border-b pb-4 sm:pb-0 border-border"
+          onValueChange={(value) => handleFilterChange(value)}
         >
           {filters.map((filter) => (
             <div key={filter.value} className="relative pb-2">
@@ -135,8 +181,13 @@ export default function Movies() {
       {/* title and selections */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* title */}
-        <div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Movies</h2>
+        <div className="flex flex-col items-center sm:items-start gap-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
+            {pageTitle}
+          </h2>
+          <h2 className="text-base sm:text-lg md:text-xl text-muted-foreground ">
+            {pageSubtitle}
+          </h2>
         </div>
 
         <div className="flex flex-col sm:flex-row w-full sm:w-fit max-w-lg items-center p-2 gap-2">
