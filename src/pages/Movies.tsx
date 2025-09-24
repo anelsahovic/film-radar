@@ -18,21 +18,25 @@ import {
 import type { Genre, Movie } from '@/types/movies.types';
 import { Calendar, Clapperboard, Flame, PlayCircle, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
 
 export default function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<Genre[]>();
   const [genresMap, setGenresMap] = useState<Record<number, string>>({});
-  const [selectedFilter, setSelectedFilter] = useState('all');
-  const [sortingValue, setSortingValue] = useState('default');
-  const [selectedGenre, setSelectedGenre] = useState('default');
-  const [searchQuery, setSearchQuery] = useState('');
+
   const [pageTitle, setPageTitle] = useState('All Movies');
   const [pageSubtitle, setPageSubtitle] = useState('List of all movies');
-  const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedFilter = searchParams.get('filter') || 'all';
+  const sortingValue = searchParams.get('sort_by') || 'default';
+  const selectedGenre = searchParams.get('with_genres') || 'default';
+  const searchQuery = searchParams.get('query') || '';
+  const pageNumber = searchParams.get('page') || '1';
 
   // fetch movies
   useEffect(() => {
@@ -56,15 +60,16 @@ export default function Movies() {
         // fetch movies based on search query or filter
         const response =
           searchQuery.length > 0
-            ? await getMovieByQuery(searchQuery, pageNumber)
+            ? await getMovieByQuery(searchQuery, Number(pageNumber))
             : selectedFilter === 'all'
-            ? await getMovies(sortingValue, selectedGenre, pageNumber)
-            : await getFilteredMovies(selectedFilter, pageNumber);
+            ? await getMovies(sortingValue, selectedGenre, Number(pageNumber))
+            : await getFilteredMovies(selectedFilter, Number(pageNumber));
 
         if (response.status === 200) {
           setMovies(response.data.results);
-          setPageNumber(response.data.page);
           setTotalPages(Math.min(response.data.total_pages, 500));
+          searchParams.set('page', response.data.page);
+          setSearchParams(searchParams);
         } else {
           setErrorMessage("Could't fetch the movies");
         }
@@ -105,17 +110,53 @@ export default function Movies() {
     fetchGenres();
   }, []);
 
-  // reset page to 1 when filters/sorting/genre changes
-  useEffect(() => {
-    setPageNumber(1);
-    setSearchQuery('');
-  }, [selectedFilter, sortingValue, selectedGenre]);
-
   const handleFilterChange = (filter: string) => {
-    setSelectedFilter(filter);
-    setSelectedGenre('default');
-    setSortingValue('default');
-    setPageNumber(1);
+    searchParams.set('filter', filter);
+    searchParams.set('page', '1');
+
+    searchParams.delete('sort_by');
+    searchParams.delete('with_genres');
+    searchParams.delete('query');
+
+    setSearchParams(searchParams);
+  };
+
+  const handleSortBy = (value: string) => {
+    searchParams.set('sort_by', value);
+    searchParams.set('filter', 'all');
+    searchParams.set('page', '1');
+
+    searchParams.delete('query');
+
+    setSearchParams(searchParams);
+  };
+
+  const handleGenreSelect = (value: string) => {
+    searchParams.set('with_genres', value);
+    searchParams.set('filter', 'all');
+    searchParams.set('page', '1');
+
+    searchParams.delete('query');
+
+    setSearchParams(searchParams);
+  };
+
+  const handlePageChange = (page: number) => {
+    searchParams.set('page', page.toString());
+    setSearchParams(searchParams);
+  };
+
+  const handleSearchQuery = (query: string) => {
+    searchParams.set('query', query);
+    searchParams.set('filter', 'all');
+    searchParams.set('page', '1');
+
+    searchParams.delete('sort_by');
+    searchParams.delete('with_genres');
+
+    if (query.length === 0) searchParams.delete('query');
+
+    setSearchParams(searchParams);
   };
 
   const filters = [
@@ -157,8 +198,8 @@ export default function Movies() {
       <div className="flex justify-center w-full px-4">
         <Search
           type="movies"
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
+          searchQuery={searchQuery ? searchQuery : ''}
+          handleSearchQuery={handleSearchQuery}
         />
       </div>
 
@@ -213,8 +254,7 @@ export default function Movies() {
             <GenreSelection
               genres={genres || []}
               selectedGenre={selectedGenre}
-              setSelectedGenre={setSelectedGenre}
-              setSelectedFilter={setSelectedFilter}
+              handleGenreSelect={handleGenreSelect}
             />
           </div>
 
@@ -223,8 +263,7 @@ export default function Movies() {
             <SortBySelection
               type="movie"
               sortingValue={sortingValue}
-              setSortingValue={setSortingValue}
-              setSelectedFilter={setSelectedFilter}
+              handleSortBy={handleSortBy}
             />
           </div>
         </div>
@@ -253,8 +292,8 @@ export default function Movies() {
       <div className="my-2">
         <PagePagination
           totalPages={totalPages}
-          pageNumber={pageNumber}
-          setPageNumber={setPageNumber}
+          pageNumber={Number(pageNumber)}
+          handlePageChange={handlePageChange}
         />
       </div>
     </div>

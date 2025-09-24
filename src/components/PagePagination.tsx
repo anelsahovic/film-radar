@@ -10,25 +10,25 @@ import {
 
 type Props = {
   pageNumber: number;
-  setPageNumber: (pageNumber: number) => void;
+  handlePageChange: (pageNumber: number) => void;
   totalPages: number;
 };
 
 export default function PagePagination({
   pageNumber,
-  setPageNumber,
   totalPages,
+  handlePageChange,
 }: Props) {
   const handlePreviousPage = () => {
-    if (pageNumber > 1) setPageNumber(pageNumber - 1);
+    if (pageNumber > 1) handlePageChange(pageNumber - 1);
   };
 
   const handleNextPage = () => {
-    if (pageNumber < totalPages) setPageNumber(pageNumber + 1);
+    if (pageNumber < totalPages) handlePageChange(pageNumber + 1);
   };
 
   const handlePageClick = (number: number) => {
-    setPageNumber(number);
+    handlePageChange(number);
   };
 
   // Compute visible pages (sliding window of 3)

@@ -6,16 +6,20 @@ import { MdMovie, MdTv, MdPerson } from 'react-icons/md';
 
 type Props = {
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  handleSearchQuery: (query: string) => void;
   type: 'movies' | 'tv' | 'people';
 };
-export default function Search({ searchQuery, setSearchQuery, type }: Props) {
+export default function Search({
+  searchQuery,
+  handleSearchQuery,
+  type,
+}: Props) {
   const [inputValue, setInputValue] = useState(searchQuery);
 
   // debounce the search to prevent making too many api requests
   useDebounce(
     () => {
-      setSearchQuery(inputValue);
+      handleSearchQuery(inputValue);
     },
     500,
     [inputValue]

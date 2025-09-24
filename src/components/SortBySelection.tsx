@@ -11,15 +11,13 @@ import {
 type Props = {
   type: 'movie' | 'tv';
   sortingValue: string;
-  setSortingValue: (value: string) => void;
-  setSelectedFilter?: (value: string) => void;
+  handleSortBy: (sortBy: string) => void;
 };
 
 export default function SortBySelection({
   type,
   sortingValue,
-  setSortingValue,
-  setSelectedFilter,
+  handleSortBy,
 }: Props) {
   const movieSelection = [
     { value: 'default', label: 'Default' },
@@ -41,18 +39,13 @@ export default function SortBySelection({
     { value: 'vote_average.desc', label: 'Highest Rated' },
   ];
 
-  const handleSelectionChange = (value: string) => {
-    setSortingValue(value);
-    if (setSelectedFilter) setSelectedFilter('all');
-  };
-
   return (
     <SelectGroup>
       <SelectLabel>Sort by</SelectLabel>
       <Select
         defaultValue="default"
         value={sortingValue}
-        onValueChange={(value) => handleSelectionChange(value)}
+        onValueChange={(value) => handleSortBy(value)}
       >
         <SelectTrigger className="w-full sm:w-[120px]">
           <SelectValue placeholder="Default" />

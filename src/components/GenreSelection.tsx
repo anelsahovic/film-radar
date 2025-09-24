@@ -12,27 +12,21 @@ import {
 type Props = {
   genres: Genre[];
   selectedGenre: string;
-  setSelectedGenre: (value: string) => void;
-  setSelectedFilter?: (value: string) => void;
+  handleGenreSelect: (genre: string) => void;
 };
 
 export default function GenreSelection({
   genres,
   selectedGenre,
-  setSelectedGenre,
-  setSelectedFilter,
+  handleGenreSelect,
 }: Props) {
-  const handleSelectedGenre = (value: string) => {
-    setSelectedGenre(value);
-    if (setSelectedFilter) setSelectedFilter('all');
-  };
   return (
     <SelectGroup>
       <SelectLabel>Genre</SelectLabel>
       <Select
         defaultValue="default"
         value={selectedGenre}
-        onValueChange={(value) => handleSelectedGenre(value)}
+        onValueChange={(value) => handleGenreSelect(value)}
       >
         <SelectTrigger className="w-full sm:w-[120px]">
           <SelectValue placeholder="Select" />
