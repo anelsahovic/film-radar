@@ -2,7 +2,8 @@ import { LuSearch } from 'react-icons/lu';
 import { Input } from './ui/input';
 import { useState } from 'react';
 import { useDebounce } from 'react-use';
-import { MdMovie, MdTv, MdPerson } from 'react-icons/md';
+import { MdPerson, MdOutlineLocalMovies } from 'react-icons/md';
+import { FiTv } from 'react-icons/fi';
 
 type Props = {
   searchQuery: string;
@@ -32,8 +33,8 @@ export default function Search({
   };
 
   const iconMap = {
-    movies: <MdMovie className="h-5 w-5 text-muted-foreground" />,
-    tv: <MdTv className="h-5 w-5 text-muted-foreground" />,
+    movies: <MdOutlineLocalMovies className="h-5 w-5 text-muted-foreground" />,
+    tv: <FiTv className="h-5 w-5 text-muted-foreground" />,
     people: <MdPerson className="h-5 w-5 text-muted-foreground" />,
   };
   return (

@@ -1,50 +1,49 @@
-import type { Movie } from '@/types/movies.types';
-
-import { FaStar } from 'react-icons/fa';
-import { Link } from 'react-router';
+import type { TvShow } from '@/types/tv.types';
 import { format, getYear } from 'date-fns';
-import { MdOutlineLocalMovies } from 'react-icons/md';
+import { FaStar } from 'react-icons/fa';
+import { FiTv } from 'react-icons/fi';
+import { Link } from 'react-router';
 
-interface Props {
-  movie: Movie;
+type Props = {
+  tvShow: TvShow;
   genres: Record<number, string>;
-}
+};
 
-export default function MovieCard({ movie, genres }: Props) {
+export default function TvShowCard({ tvShow, genres }: Props) {
   return (
     <Link
-      to={`/movies/${movie.id}`}
-      className="relative group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-background"
+      to={`/tv-shows/${tvShow.id}`}
+      className="relative group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-background "
     >
       {/* Poster */}
       <img
         src={
-          movie.poster_path
-            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+          tvShow.poster_path
+            ? `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`
             : '/images/no_poster_placeholder.svg'
         }
-        alt={movie.title}
+        alt={tvShow.name}
         className="w-full h-[320px] object-cover group-hover:scale-105 transition-transform duration-300"
       />
 
-      {/* Overlay on hover - movie details*/}
+      {/* Overlay on hover - tv show details */}
       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-        <span className="text-sm text-white">Movie</span>
+        <span className="text-sm text-white">TV Show</span>
 
-        <h3 className="text-lg font-bold text-white ">{movie.title}</h3>
-        <p className="text-sm text-gray-300 line-clamp-3">{movie.overview}</p>
+        <h3 className="text-lg font-bold text-white">{tvShow.name}</h3>
+        <p className="text-sm text-gray-300 line-clamp-3">{tvShow.overview}</p>
 
         <div className="mt-2">
-          <span className="text-sm text-white">Release date: </span>
+          <span className="text-sm text-white">First air date: </span>
           <span className="font-semibold text-sm text-white">
-            {movie.release_date
-              ? format(movie.release_date, 'dd/MM/yyyy')
+            {tvShow.first_air_date
+              ? format(new Date(tvShow.first_air_date), 'dd/MM/yyyy')
               : 'N/A'}
           </span>
         </div>
 
-        <div className="mt-2 flex items-center gap-1.5">
-          {movie.genre_ids.map((id) => (
+        <div className="mt-2 flex items-center gap-1.5 flex-wrap">
+          {tvShow.genre_ids.map((id) => (
             <span
               key={id}
               className="font-semibold text-xs text-white px-2 py-1 rounded-full bg-neutral-500/50 backdrop-blur-lg"
@@ -55,27 +54,29 @@ export default function MovieCard({ movie, genres }: Props) {
         </div>
       </div>
 
-      {/* top left - movie */}
-      <div className="absolute top-2.5 left-2 flex items-center gap-1 px-2 py-1 rounded-full bg-background/40 backdrop-blur-sm font-medium tracking-wide">
-        <MdOutlineLocalMovies className="size-3 sm:size-4 text-accent-foreground" />
-        <span className="text-xs sm:text-sm">Movie</span>
+      {/* top left - TV Show */}
+      <div className="absolute top-2.5 left-2 flex items-center gap-1 px-2 py-1 rounded-full bg-background/40 backdrop-blur-sm font-medium tracking-wide text-white">
+        <FiTv className="size-3 sm:size-4 text-white" />
+        <span className="text-xs sm:text-sm">TV Show</span>
       </div>
 
       {/* top right - rating */}
       <div className="absolute top-2 right-2 flex items-center gap-1 px-3 py-1 rounded-full bg-background/80 backdrop-blur-sm font-semibold">
         <FaStar className="size-3 sm:size-4 text-yellow-500" />
         <span className="text-sm sm:text-base">
-          {movie.vote_average.toFixed(1)}
+          {tvShow.vote_average.toFixed(1)}
         </span>
       </div>
 
       {/* bottom - Info bar */}
       <div className="absolute bottom-0 left-0 right-0 bg-background/30 backdrop-blur-sm px-4 py-2 flex justify-between items-center gap-4 group-hover:opacity-0">
         <span className="text-sm font-semibold truncate text-white">
-          {movie.title}
+          {tvShow.name}
         </span>
         <span className="text-white font-extrabold text-sm">
-          {movie.release_date ? getYear(movie.release_date) : 'N/A'}
+          {tvShow.first_air_date
+            ? getYear(new Date(tvShow.first_air_date))
+            : 'N/A'}
         </span>
       </div>
     </Link>

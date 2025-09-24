@@ -93,14 +93,12 @@ export default function Movies() {
 
         if (response.status === 200) {
           setGenres(response.data.genres);
-          const genreMap: Record<number, string> = {};
-          response.data.genres.forEach(
-            (genre: { id: number; name: string }) => {
-              genreMap[genre.id] = genre.name;
-            }
-          );
+          const tempGenreMap: Record<number, string> = {};
+          response.data.genres.forEach((genre: Genre) => {
+            tempGenreMap[genre.id] = genre.name;
+          });
 
-          setGenresMap(genreMap);
+          setGenresMap(tempGenreMap);
         }
       } catch (error) {
         console.log(error);
@@ -281,7 +279,7 @@ export default function Movies() {
       )}
       {/* list of movies */}
       {!loading && !errorMessage && movies.length > 0 && (
-        <div className="w-full justify-center grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+        <div className="w-full justify-center grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))] place-items-center">
           {movies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} genres={genresMap} />
           ))}
