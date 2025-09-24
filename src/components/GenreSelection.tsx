@@ -1,4 +1,4 @@
-import type { Genre } from '@/types/movies';
+import type { Genre } from '@/types/movies.types';
 import {
   Select,
   SelectContent,

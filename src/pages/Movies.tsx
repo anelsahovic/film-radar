@@ -15,7 +15,7 @@ import {
   getMovieGenres,
   getMovies,
 } from '@/services/movies.service';
-import type { Genre, Movie } from '@/types/movies';
+import type { Genre, Movie } from '@/types/movies.types';
 import { Calendar, Clapperboard, Flame, PlayCircle, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -230,15 +230,17 @@ export default function Movies() {
         </div>
       </div>
 
-      {/* list of movies */}
+      {/* Loader */}
       {loading && !errorMessage && <Loader />}
 
+      {/* Error message */}
       {!loading && errorMessage && <ErrorMessage message={errorMessage} />}
 
+      {/* No result found */}
       {!loading && !errorMessage && movies.length === 0 && (
         <NoResults type="movie" />
       )}
-
+      {/* list of movies */}
       {!loading && !errorMessage && movies.length > 0 && (
         <div className="w-full justify-center grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
           {movies.map((movie) => (

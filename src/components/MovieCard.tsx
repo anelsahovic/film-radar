@@ -1,4 +1,4 @@
-import type { Movie } from '@/types/movies';
+import type { Movie } from '@/types/movies.types';
 
 import { FaStar } from 'react-icons/fa';
 import { Link } from 'react-router';

@@ -5,6 +5,7 @@ import Movies from './pages/Movies';
 import TvShows from './pages/TvShows';
 import People from './pages/People';
 import { ThemeProvider } from './components/ui/theme-provider';
+import ShowMovie from './pages/ShowMovie';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="movies" element={<Movies />} />
+          <Route path="movies/:movieId" element={<ShowMovie />} />
           <Route path="tv-shows" element={<TvShows />} />
           <Route path="people" element={<People />} />
         </Route>

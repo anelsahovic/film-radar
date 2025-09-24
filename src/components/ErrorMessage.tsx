@@ -1,4 +1,8 @@
 import { AlertCircle } from 'lucide-react';
+import { FaHome } from 'react-icons/fa';
+import { Link } from 'react-router';
+import { twMerge } from 'tailwind-merge';
+import { buttonVariants } from './ui/button';
 
 type ErrorMessageProps = {
   message: string;
@@ -18,7 +22,18 @@ export default function ErrorMessage({ message }: ErrorMessageProps) {
       </h2>
 
       {/* Subtext */}
-      <p className="text-muted-foreground max-w-sm">{message}</p>
+      <p className="text-muted-foreground max-w-sm mb-4">{message}</p>
+
+      <Link
+        to="/"
+        className={twMerge(
+          'flex items-center justify-center gap-2',
+          buttonVariants({ variant: 'secondary' })
+        )}
+      >
+        <FaHome className="size-5" />
+        <span>Go Home</span>
+      </Link>
     </div>
   );
 }

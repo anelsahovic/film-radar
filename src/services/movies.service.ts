@@ -33,6 +33,10 @@ export const getMovieByQuery = async (query: string, page: number) => {
   return await api.get(`/search/movie?${params.toString()}`);
 };
 
+export const getMovieById = async (id: string) => {
+  return await api.get(`/movie/${id}`);
+};
+
 export const getMovieGenres = async () => {
   return await api.get(`/genre/movie/list`);
 };
