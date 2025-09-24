@@ -24,6 +24,15 @@ export const getFilteredMovies = async (filter: string, page: number) => {
   return await api.get(`/movie/${filter}?${params}`);
 };
 
+export const getMovieByQuery = async (query: string, page: number) => {
+  const params = new URLSearchParams({
+    query: query,
+    page: page.toString(),
+  });
+
+  return await api.get(`/search/movie?${params.toString()}`);
+};
+
 export const getMovieGenres = async () => {
   return await api.get(`/genre/movie/list`);
 };

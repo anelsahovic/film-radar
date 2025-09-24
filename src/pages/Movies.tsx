@@ -4,20 +4,20 @@ import Loader from '@/components/Loader';
 import MovieCard from '@/components/MovieCard';
 import NoResults from '@/components/NoResults';
 import PagePagination from '@/components/PagePagination';
+import Search from '@/components/Search';
 import SortBySelection from '@/components/SortBySelection';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 import {
   getFilteredMovies,
+  getMovieByQuery,
   getMovieGenres,
   getMovies,
 } from '@/services/movies.service';
 import type { Genre, Movie } from '@/types/movies';
 import { Calendar, Clapperboard, Flame, PlayCircle, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { LuSearch } from 'react-icons/lu';
 
 export default function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -26,6 +26,7 @@ export default function Movies() {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [sortingValue, setSortingValue] = useState('default');
   const [selectedGenre, setSelectedGenre] = useState('default');
+  const [searchQuery, setSearchQuery] = useState('');
   const [pageTitle, setPageTitle] = useState('All Movies');
   const [pageSubtitle, setPageSubtitle] = useState('List of all movies');
   const [pageNumber, setPageNumber] = useState(1);
@@ -33,7 +34,7 @@ export default function Movies() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  //fetch movies
+  // fetch movies
   useEffect(() => {
     const fetchMovies = async () => {
       try {
@@ -44,14 +45,19 @@ export default function Movies() {
         const foundFilter = filters.find(
           (item) => item.value === selectedFilter
         );
-        if (foundFilter) {
+        if (searchQuery.length > 0) {
+          setPageTitle('Movie Search');
+          setPageSubtitle(`Showing results for "${searchQuery}"`);
+        } else if (foundFilter) {
           setPageTitle(foundFilter.label);
           setPageSubtitle(foundFilter.description);
         }
 
-        // fetch movies based on filter
+        // fetch movies based on search query or filter
         const response =
-          selectedFilter === 'all'
+          searchQuery.length > 0
+            ? await getMovieByQuery(searchQuery, pageNumber)
+            : selectedFilter === 'all'
             ? await getMovies(sortingValue, selectedGenre, pageNumber)
             : await getFilteredMovies(selectedFilter, pageNumber);
 
@@ -72,9 +78,9 @@ export default function Movies() {
 
     fetchMovies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilter, sortingValue, selectedGenre, pageNumber]);
+  }, [selectedFilter, sortingValue, selectedGenre, searchQuery, pageNumber]);
 
-  //  fetch movie genres
+  // fetch movie genres
   useEffect(() => {
     const fetchGenres = async () => {
       try {
@@ -102,6 +108,7 @@ export default function Movies() {
   // reset page to 1 when filters/sorting/genre changes
   useEffect(() => {
     setPageNumber(1);
+    setSearchQuery('');
   }, [selectedFilter, sortingValue, selectedGenre]);
 
   const handleFilterChange = (filter: string) => {
@@ -148,21 +155,11 @@ export default function Movies() {
     <div className="flex flex-col gap-8 p-4 my-4">
       {/* search */}
       <div className="flex justify-center w-full px-4">
-        <div className="relative w-full max-w-lg">
-          {/* Search Icon */}
-          <LuSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-
-          {/* Input */}
-          <Input
-            placeholder="Search movies..."
-            className="
-            pl-12 pr-4 h-10 sm:h-11 md:h-12 w-full rounded-full
-            bg-background/70  border border-border text-sm sm:text-base md:text-lg
-            focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1
-            transition-all font-semibold duration-300
-          "
-          />
-        </div>
+        <Search
+          type="movies"
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
       </div>
 
       {/* filter of movie - radio group buttons */}
@@ -239,7 +236,7 @@ export default function Movies() {
       {!loading && errorMessage && <ErrorMessage message={errorMessage} />}
 
       {!loading && !errorMessage && movies.length === 0 && (
-        <NoResults type="people" />
+        <NoResults type="movie" />
       )}
 
       {!loading && !errorMessage && movies.length > 0 && (
