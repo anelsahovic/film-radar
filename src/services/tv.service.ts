@@ -21,10 +21,6 @@ export const getTvShowsByFilter = async (filter: string, page: number) => {
   return await api.get(`/tv/${filter}?${params.toString()}`);
 };
 
-export const getTvShowGenres = async () => {
-  return await api.get('/genre/tv/list');
-};
-
 export const getTvShowsByQuery = async (query: string, page: number) => {
   const params = new URLSearchParams({
     query,
@@ -32,4 +28,12 @@ export const getTvShowsByQuery = async (query: string, page: number) => {
   });
 
   return await api.get(`/search/tv?${params.toString()}`);
+};
+
+export const getTvShowById = async (id: string) => {
+  return await api.get(`/tv/${id}`);
+};
+
+export const getTvShowGenres = async () => {
+  return await api.get('/genre/tv/list');
 };

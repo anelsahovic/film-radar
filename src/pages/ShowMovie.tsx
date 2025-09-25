@@ -23,6 +23,7 @@ import {
 import { useParams } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { intervalToDuration } from 'date-fns';
+import ProductionCompanies from '@/components/ProductionCompanies';
 
 export default function ShowMovie() {
   const { movieId } = useParams();
@@ -41,7 +42,6 @@ export default function ShowMovie() {
 
         if (response.status === 200) {
           setMovie(response.data);
-          console.log(response.data);
         } else {
           setErrorMessage("That movie doesn't exist");
         }
@@ -88,7 +88,9 @@ export default function ShowMovie() {
     },
     {
       label: 'Release Date',
-      value: formatDate(movie.release_date, 'dd/MM/yyyy'),
+      value: movie.release_date
+        ? formatDate(movie.release_date, 'dd/MM/yyyy')
+        : 'N/A',
       icon: <FaCalendarAlt />,
     },
     {
@@ -118,9 +120,19 @@ export default function ShowMovie() {
       icon: <FaRegCheckCircle />,
     },
   ];
+
+  const posterImageUrl = movie.poster_path
+    ? `https://image.tmdb.org/t/p/original${movie.poster_path}`
+    : '/images/no_poster_placeholder.svg';
+
+  const heroImageUrl = movie.backdrop_path
+    ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+    : '/images/no_poster_placeholder.svg';
+
+  const metaTitle = `${movie?.title} - Film Radar - Discover movies, TV shows, and people.`;
   return (
     <div>
-      <title>{movie.title}</title>
+      <title>{metaTitle}</title>
       {/* Loader */}
       {loading && !errorMessage && <Loader />}
 
@@ -133,7 +145,7 @@ export default function ShowMovie() {
           <div
             className="relative w-full h-full sm:min-h-[60vh] md:min-h-[70vh] flex items-end pt-5"
             style={{
-              backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
+              backgroundImage: `url(${heroImageUrl})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -142,7 +154,7 @@ export default function ShowMovie() {
             <div className="relative container mx-auto px-4 flex flex-col sm:flex-row gap-6 sm:gap-8 pb-6 sm:pb-8 items-center">
               {/* Poster */}
               <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                src={posterImageUrl}
                 alt={movie.title}
                 className="w-48 sm:w-48 md:w-56 rounded-lg shadow-lg flex-shrink-0"
               />
@@ -231,7 +243,7 @@ export default function ShowMovie() {
           </div>
 
           {/* Main Content */}
-          <div className="container mx-auto px-4 py-10 space-y-12">
+          <div className="flex flex-col gap-12 p-6 md:px-10">
             {/* Quick Stats */}
             <section>
               <h2 className="text-2xl font-semibold mb-4">Details</h2>
@@ -249,30 +261,7 @@ export default function ShowMovie() {
 
             {/* Production Companies */}
             {movie.production_companies.length > 0 && (
-              <section>
-                <h2 className="text-2xl font-semibold mb-4">
-                  Production Companies
-                </h2>
-                <div className="flex flex-wrap gap-4">
-                  {movie.production_companies.map((company) => (
-                    <div
-                      key={company.id}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-card transition-shadow duration-300"
-                    >
-                      {company.logo_path && (
-                        <img
-                          src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
-                          alt={company.name}
-                          className="h-10 sm:h-12 object-contain rounded"
-                        />
-                      )}
-                      <span className="font-medium text-foreground">
-                        {company.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
+              <ProductionCompanies companies={movie.production_companies} />
             )}
 
             {/* Production Countries */}
