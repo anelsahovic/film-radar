@@ -15,7 +15,7 @@ export const getMovies = async (sort: string, genre: string, page: number) => {
   return await api.get(`/discover/movie?${params.toString()}`);
 };
 
-export const getFilteredMovies = async (filter: string, page: number) => {
+export const getMoviesByFilter = async (filter: string, page: number) => {
   const params = new URLSearchParams();
 
   if (page) {

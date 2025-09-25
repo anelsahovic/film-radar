@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 import {
-  getFilteredMovies,
+  getMoviesByFilter,
   getMovieByQuery,
   getMovieGenres,
   getMovies,
@@ -47,7 +47,7 @@ export default function Movies() {
         setLoading(true);
         setErrorMessage('');
 
-        // find and set movie filter
+        // find and set page title/subtitle
         const foundFilter = filters.find(
           (item) => item.value === selectedFilter
         );
@@ -65,7 +65,7 @@ export default function Movies() {
             ? await getMovieByQuery(searchQuery, Number(pageNumber))
             : selectedFilter === 'all'
             ? await getMovies(sortingValue, selectedGenre, Number(pageNumber))
-            : await getFilteredMovies(selectedFilter, Number(pageNumber));
+            : await getMoviesByFilter(selectedFilter, Number(pageNumber));
 
         if (response.status === 200) {
           setMovies(response.data.results);
@@ -85,7 +85,15 @@ export default function Movies() {
 
     fetchMovies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilter, sortingValue, selectedGenre, searchQuery, pageNumber]);
+  }, [
+    selectedFilter,
+    sortingValue,
+    selectedGenre,
+    searchQuery,
+    pageNumber,
+    searchParams,
+    setSearchParams,
+  ]);
 
   // fetch movie genres
   useEffect(() => {
@@ -117,6 +125,8 @@ export default function Movies() {
     searchParams.delete('sort_by');
     searchParams.delete('with_genres');
     searchParams.delete('query');
+
+    if (filter === 'all') searchParams.delete('filter');
 
     setSearchParams(searchParams);
   };

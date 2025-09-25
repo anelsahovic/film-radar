@@ -6,13 +6,17 @@ import PagePagination from '@/components/PagePagination';
 import Search from '@/components/Search';
 import SortBySelection from '@/components/SortBySelection';
 import TvShowCard from '@/components/TvShowCard';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   getTvShowGenres,
   getTvShows,
+  getTvShowsByFilter,
   getTvShowsByQuery,
 } from '@/services/tv.service';
 import type { Genre } from '@/types/movies.types';
 import type { TvShow } from '@/types/tv.types';
+import { Calendar, Flame, Star, TrendingUp, Tv } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
@@ -21,6 +25,8 @@ export default function TvShows() {
   const [genres, setGenres] = useState<Genre[]>();
   const [genresMap, setGenresMap] = useState<Record<number, string>>({});
 
+  const [pageTitle, setPageTitle] = useState('Discover TV Shows');
+  const [pageSubtitle, setPageSubtitle] = useState('Explore all TV shows');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [totalPages, setTotalPages] = useState(0);
@@ -30,6 +36,7 @@ export default function TvShows() {
   const pageNumber = searchParams.get('page') || '1';
   const sortingValue = searchParams.get('sort_by') || '';
   const selectedGenre = searchParams.get('with_genres') || '';
+  const selectedFilter = searchParams.get('filter') || 'all';
 
   // fetch tv shows
   useEffect(() => {
@@ -38,10 +45,25 @@ export default function TvShows() {
         setLoading(true);
         setErrorMessage('');
 
+        // find and set page title/subtitle
+        const foundFilter = filters.find(
+          (item) => item.value === selectedFilter
+        );
+        if (searchQuery.length > 0) {
+          setPageTitle('TV Show Search');
+          setPageSubtitle(`Showing results for "${searchQuery}"`);
+        } else if (foundFilter) {
+          setPageTitle(foundFilter.label);
+          setPageSubtitle(foundFilter.description);
+        }
+
+        // fetch tv shows based on search query or filter
         const response =
           searchQuery.length > 0
             ? await getTvShowsByQuery(searchQuery, Number(pageNumber))
-            : await getTvShows(sortingValue, selectedGenre, Number(pageNumber));
+            : selectedFilter === 'all'
+            ? await getTvShows(sortingValue, selectedGenre, Number(pageNumber))
+            : await getTvShowsByFilter(selectedFilter, Number(pageNumber));
 
         if (response.status === 200) {
           setTvShows(response.data.results);
@@ -60,10 +82,12 @@ export default function TvShows() {
     };
 
     fetchTvShows();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     pageNumber,
     searchParams,
     searchQuery,
+    selectedFilter,
     selectedGenre,
     setSearchParams,
     sortingValue,
@@ -128,6 +152,52 @@ export default function TvShows() {
 
     setSearchParams(searchParams);
   };
+
+  const handleFilterChange = (filter: string) => {
+    searchParams.set('filter', filter);
+    searchParams.set('page', '1');
+
+    searchParams.delete('sort_by');
+    searchParams.delete('with_genres');
+    searchParams.delete('query');
+
+    if (filter === 'all') searchParams.delete('filter');
+
+    setSearchParams(searchParams);
+  };
+
+  const filters = [
+    {
+      value: 'all',
+      label: 'Discover TV Shows',
+      description: 'Explore all TV shows',
+      icon: <Tv />,
+    },
+    {
+      value: 'airing_today',
+      label: 'Airing Today',
+      description: 'Shows airing today',
+      icon: <Calendar />,
+    },
+    {
+      value: 'on_the_air',
+      label: 'Currently Airing',
+      description: 'Ongoing shows on TV',
+      icon: <TrendingUp />,
+    },
+    {
+      value: 'popular',
+      label: 'Popular',
+      description: 'Most watched right now',
+      icon: <Flame />,
+    },
+    {
+      value: 'top_rated',
+      label: 'Top Rated',
+      description: 'Highest rated by viewers',
+      icon: <Star />,
+    },
+  ];
   return (
     <div className="flex flex-col gap-8 p-4 my-4">
       <title>Film Radar - TV Shows</title>
@@ -141,17 +211,47 @@ export default function TvShows() {
       </div>
 
       {/* filtering */}
-      <div></div>
+      <div className="w-full flex justify-center">
+        <RadioGroup
+          defaultValue="all"
+          value={selectedFilter}
+          onValueChange={(value) => handleFilterChange(value)}
+          className="flex justify-center flex-wrap items-center gap-8 border-b pb-4 sm:pb-0 border-border"
+        >
+          {filters.map((filter) => (
+            <div key={filter.value} className="relative pb-2">
+              {/* Hide the radio but keep it as peer */}
+              <RadioGroupItem
+                value={filter.value}
+                id={filter.value}
+                className="peer sr-only"
+              />
+
+              {/* Label acts like the button */}
+              <Label
+                htmlFor={filter.value}
+                className="cursor-pointer text-sm sm:text-base font-medium text-muted-foreground transition-colors hover:text-foreground peer-data-[state=checked]:text-primary"
+              >
+                {filter.icon}
+                {filter.label}
+              </Label>
+
+              {/* Underline that activates when checked */}
+              <div className="absolute left-0 right-0 -bottom-[1px] h-[2px] bg-primary scale-x-0 peer-data-[state=checked]:scale-x-100 transition-transform duration-300 origin-center" />
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
 
       {/* title and sorting */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* title */}
         <div className="flex flex-col items-center sm:items-start gap-2">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-            Discover TV Shows
+            {pageTitle}
           </h2>
           <h2 className="text-base sm:text-lg md:text-xl text-muted-foreground ">
-            Explore TV shows in our collection
+            {pageSubtitle}
           </h2>
         </div>
 

@@ -13,6 +13,14 @@ export const getTvShows = async (sort: string, genre: string, page: number) => {
   return await api.get(`/discover/tv?${params.toString()}`);
 };
 
+export const getTvShowsByFilter = async (filter: string, page: number) => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+  });
+
+  return await api.get(`/tv/${filter}?${params.toString()}`);
+};
+
 export const getTvShowGenres = async () => {
   return await api.get('/genre/tv/list');
 };
