@@ -25,8 +25,10 @@ export default function Movies() {
   const [genres, setGenres] = useState<Genre[]>();
   const [genresMap, setGenresMap] = useState<Record<number, string>>({});
 
-  const [pageTitle, setPageTitle] = useState('All Movies');
-  const [pageSubtitle, setPageSubtitle] = useState('List of all movies');
+  const [pageTitle, setPageTitle] = useState('Discover Movies');
+  const [pageSubtitle, setPageSubtitle] = useState(
+    'Explore every movie in our collection'
+  );
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -160,7 +162,7 @@ export default function Movies() {
   const filters = [
     {
       value: 'all',
-      label: 'All Movies',
+      label: 'Discover Movies',
       description: 'Explore every movie in our collection',
       icon: <Clapperboard />,
     },
@@ -192,6 +194,7 @@ export default function Movies() {
 
   return (
     <div className="flex flex-col gap-8 p-4 my-4">
+      <title>Film Radar - Movies</title>
       {/* search */}
       <div className="flex justify-center w-full px-4">
         <Search

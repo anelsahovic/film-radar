@@ -1,7 +1,14 @@
 import api from './axios';
 
-export const getTvShows = async (page: number) => {
+export const getTvShows = async (sort: string, genre: string, page: number) => {
   const params = new URLSearchParams({ page: page.toString() });
+
+  if (sort !== 'default') {
+    params.append('sort_by', sort);
+  }
+  if (genre !== 'default') {
+    params.append('with_genres', genre);
+  }
 
   return await api.get(`/discover/tv?${params.toString()}`);
 };

@@ -1,8 +1,10 @@
 import ErrorMessage from '@/components/ErrorMessage';
+import GenreSelection from '@/components/GenreSelection';
 import Loader from '@/components/Loader';
 import NoResults from '@/components/NoResults';
 import PagePagination from '@/components/PagePagination';
 import Search from '@/components/Search';
+import SortBySelection from '@/components/SortBySelection';
 import TvShowCard from '@/components/TvShowCard';
 import {
   getTvShowGenres,
@@ -26,6 +28,8 @@ export default function TvShows() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('query') || '';
   const pageNumber = searchParams.get('page') || '1';
+  const sortingValue = searchParams.get('sort_by') || '';
+  const selectedGenre = searchParams.get('with_genres') || '';
 
   // fetch tv shows
   useEffect(() => {
@@ -37,7 +41,7 @@ export default function TvShows() {
         const response =
           searchQuery.length > 0
             ? await getTvShowsByQuery(searchQuery, Number(pageNumber))
-            : await getTvShows(Number(pageNumber));
+            : await getTvShows(sortingValue, selectedGenre, Number(pageNumber));
 
         if (response.status === 200) {
           setTvShows(response.data.results);
@@ -56,7 +60,14 @@ export default function TvShows() {
     };
 
     fetchTvShows();
-  }, [pageNumber, searchParams, searchQuery, setSearchParams]);
+  }, [
+    pageNumber,
+    searchParams,
+    searchQuery,
+    selectedGenre,
+    setSearchParams,
+    sortingValue,
+  ]);
 
   // fetch tv show genres
   useEffect(() => {
@@ -95,8 +106,31 @@ export default function TvShows() {
     searchParams.set('page', page.toString());
     setSearchParams(searchParams);
   };
+
+  const handleGenreSelect = (genre: string) => {
+    searchParams.set('with_genres', genre);
+    searchParams.set('filter', 'all');
+    searchParams.set('page', '1');
+
+    searchParams.delete('query');
+
+    if (genre === 'default') searchParams.delete('with_genres');
+
+    setSearchParams(searchParams);
+  };
+
+  const handleSortBy = (value: string) => {
+    searchParams.set('sort_by', value);
+    searchParams.set('filter', 'all');
+    searchParams.set('page', '1');
+
+    searchParams.delete('query');
+
+    setSearchParams(searchParams);
+  };
   return (
     <div className="flex flex-col gap-8 p-4 my-4">
+      <title>Film Radar - TV Shows</title>
       {/* search */}
       <div className="flex w-full justify-center px-4">
         <Search
@@ -110,7 +144,37 @@ export default function TvShows() {
       <div></div>
 
       {/* title and sorting */}
-      <div></div>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* title */}
+        <div className="flex flex-col items-center sm:items-start gap-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
+            Discover TV Shows
+          </h2>
+          <h2 className="text-base sm:text-lg md:text-xl text-muted-foreground ">
+            Explore TV shows in our collection
+          </h2>
+        </div>
+
+        <div className="flex flex-col sm:flex-row w-full sm:w-fit max-w-lg items-center p-2 gap-2">
+          {/* genre selection */}
+          <div className="w-full sm:flex sm:justify-end">
+            <GenreSelection
+              genres={genres || []}
+              selectedGenre={selectedGenre}
+              handleGenreSelect={handleGenreSelect}
+            />
+          </div>
+
+          {/* sort by selection */}
+          <div className="w-full sm:flex sm:justify-end">
+            <SortBySelection
+              type="movie"
+              sortingValue={sortingValue}
+              handleSortBy={handleSortBy}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* loading state */}
       {loading && !errorMessage && <Loader />}

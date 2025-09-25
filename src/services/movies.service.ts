@@ -26,7 +26,7 @@ export const getFilteredMovies = async (filter: string, page: number) => {
 
 export const getMovieByQuery = async (query: string, page: number) => {
   const params = new URLSearchParams({
-    query: query,
+    query,
     page: page.toString(),
   });
 

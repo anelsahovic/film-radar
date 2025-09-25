@@ -120,6 +120,7 @@ export default function ShowMovie() {
   ];
   return (
     <div>
+      <title>{movie.title}</title>
       {/* Loader */}
       {loading && !errorMessage && <Loader />}
 
