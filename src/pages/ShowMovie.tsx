@@ -3,8 +3,14 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Loader from '@/components/Loader';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { getMovieById } from '@/services/movies.service';
-import type { MovieDetails } from '@/types/movies.types';
+import {
+  getMovieById,
+  getMovieGenres,
+  getMovieRecommendations,
+  getMovieReviews,
+  getSimilarMovies,
+} from '@/services/movies.service';
+import type { Genre, Movie, MovieDetails } from '@/types/movies.types';
 import { formatDate, getYear } from 'date-fns';
 import { useEffect, useState, type JSX } from 'react';
 import {
@@ -24,10 +30,17 @@ import { useParams } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { intervalToDuration } from 'date-fns';
 import ProductionCompanies from '@/components/ProductionCompanies';
+import MoviesCarousel from '@/components/MoviesCarousel';
+import type { Review } from '@/components/ReviewCard';
+import Reviews from '@/components/Reviews';
 
 export default function ShowMovie() {
   const { movieId } = useParams();
   const [movie, setMovie] = useState<MovieDetails>();
+  const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
+  const [movieRecommendations, setMovieRecommendations] = useState<Movie[]>([]);
+  const [movieReviews, setMovieReviews] = useState<Review[]>([]);
+  const [genresMap, setGenresMap] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -52,9 +65,78 @@ export default function ShowMovie() {
         setLoading(false);
       }
     };
+    const fetchSimilarMovies = async () => {
+      try {
+        const response = await getSimilarMovies(movieId!);
+
+        if (response.status === 200) {
+          setSimilarMovies(response.data.results);
+        } else {
+          console.log('No similar movies available');
+        }
+      } catch (error) {
+        console.log(error);
+        console.log('No similar movies available');
+      }
+    };
+
+    const fetchMovieRecommendations = async () => {
+      try {
+        const response = await getMovieRecommendations(movieId!);
+
+        if (response.status === 200) {
+          setMovieRecommendations(response.data.results);
+        } else {
+          console.log('No movie recommendations available');
+        }
+      } catch (error) {
+        console.log(error);
+        console.log('No movie recommendations available');
+      }
+    };
+
+    const fetchMovieReviews = async () => {
+      try {
+        const response = await getMovieReviews(movieId!);
+
+        if (response.status === 200) {
+          setMovieReviews(response.data.results);
+        } else {
+          console.log('No movie reviews available');
+        }
+      } catch (error) {
+        console.log(error);
+        console.log('No movie reviews available');
+      }
+    };
 
     fetchMovie();
+    fetchSimilarMovies();
+    fetchMovieRecommendations();
+    fetchMovieReviews();
   }, [movieId]);
+
+  // fetch movie genres
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await getMovieGenres();
+
+        if (response.status === 200) {
+          const tempGenreMap: Record<number, string> = {};
+          response.data.genres.forEach((genre: Genre) => {
+            tempGenreMap[genre.id] = genre.name;
+          });
+
+          setGenresMap(tempGenreMap);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   if (!movie) {
     return;
@@ -258,6 +340,27 @@ export default function ShowMovie() {
                 ))}
               </div>
             </section>
+
+            {/* Similar Movies */}
+            {similarMovies.length > 0 && (
+              <MoviesCarousel
+                sectionTitle="You Might Also Like"
+                movies={similarMovies}
+                genres={genresMap}
+              />
+            )}
+
+            {/* Movie Recommendations */}
+            {movieRecommendations.length > 0 && (
+              <MoviesCarousel
+                sectionTitle="Our Recommendations"
+                movies={movieRecommendations}
+                genres={genresMap}
+              />
+            )}
+
+            {/* Movie Reviews */}
+            <Reviews reviews={movieReviews} />
 
             {/* Production Companies */}
             {movie.production_companies.length > 0 && (

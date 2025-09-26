@@ -2,11 +2,21 @@ import RadialProgress from '@/components/ RadialProgress';
 import ErrorMessage from '@/components/ErrorMessage';
 import Loader from '@/components/Loader';
 import ProductionCompanies from '@/components/ProductionCompanies';
+import type { Review } from '@/components/ReviewCard';
+import Reviews from '@/components/Reviews';
 import SeasonsCollapsible from '@/components/SeasonsCollapsible';
+import TvShowsCarousel from '@/components/TvShowsCarousel';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { getTvShowById } from '@/services/tv.service';
-import type { TvShowDetails } from '@/types/tv.types';
+import {
+  getSimilarTvShows,
+  getTvShowById,
+  getTvShowGenres,
+  getTvShowRecommendations,
+  getTvShowReviews,
+} from '@/services/tv.service';
+import type { Genre } from '@/types/movies.types';
+import type { TvShow, TvShowDetails } from '@/types/tv.types';
 import { getYear } from 'date-fns';
 import { useEffect, useState, type JSX } from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
@@ -25,9 +35,17 @@ export default function ShowTvShow() {
   const { tvId } = useParams();
 
   const [tvShow, setTvShow] = useState<TvShowDetails>();
+  const [similarTvShows, setSimilarTvShows] = useState<TvShow[]>([]);
+  const [tvShowRecommendations, setTvShowRecommendations] = useState<TvShow[]>(
+    []
+  );
+  const [tvShowReviews, setTvShowReviews] = useState<Review[]>([]);
+
+  const [genresMap, setGenresMap] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // fetch tv shows
   useEffect(() => {
     const fetchTvShow = async () => {
       try {
@@ -49,8 +67,78 @@ export default function ShowTvShow() {
       }
     };
 
+    const fetchSimilarTvShows = async () => {
+      try {
+        const response = await getSimilarTvShows(tvId!);
+
+        if (response.status === 200) {
+          setSimilarTvShows(response.data.results);
+        } else {
+          console.log('No similar tv shows available');
+        }
+      } catch (error) {
+        console.log(error);
+        console.log('No similar tv shows available');
+      }
+    };
+
+    const fetchTvShowRecommendations = async () => {
+      try {
+        const response = await getTvShowRecommendations(tvId!);
+
+        if (response.status === 200) {
+          setTvShowRecommendations(response.data.results);
+        } else {
+          console.log('No tv show recommendations available');
+        }
+      } catch (error) {
+        console.log(error);
+        console.log('No tv show recommendations available');
+      }
+    };
+
+    const fetchTvShowReviews = async () => {
+      try {
+        const response = await getTvShowReviews(tvId!);
+
+        if (response.status === 200) {
+          setTvShowReviews(response.data.results);
+        } else {
+          console.log('No tv show reviews available');
+        }
+      } catch (error) {
+        console.log(error);
+        console.log('No tv show reviews available');
+      }
+    };
+
     fetchTvShow();
+    fetchSimilarTvShows();
+    fetchTvShowRecommendations();
+    fetchTvShowReviews();
   }, [tvId]);
+
+  // fetch tv show genres
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await getTvShowGenres();
+
+        if (response.status === 200) {
+          const tempGenresMap: Record<number, string> = {};
+          response.data.genres.forEach((genre: Genre) => {
+            tempGenresMap[genre.id] = genre.name;
+          });
+
+          setGenresMap(tempGenresMap);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   const detailsData = [
     { label: 'Original name', value: tvShow?.original_name, icon: <FiTv /> },
@@ -214,6 +302,7 @@ export default function ShowTvShow() {
 
           {/* Details Section */}
           <div className="flex flex-col gap-12 p-6 md:px-10">
+            {/* seasons and details */}
             <section className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
               {/*Left - Seasons */}
               <div className="md:col-span-2">
@@ -235,6 +324,26 @@ export default function ShowTvShow() {
                 </ul>
               </div>
             </section>
+
+            {/* similar tv shows */}
+            {similarTvShows.length > 0 && (
+              <TvShowsCarousel
+                sectionTitle="You Might Also Like"
+                tvShows={similarTvShows}
+                genres={genresMap}
+              />
+            )}
+
+            {/* tv show recommendations*/}
+            {tvShowRecommendations.length > 0 && (
+              <TvShowsCarousel
+                sectionTitle="Our Recommendations"
+                tvShows={tvShowRecommendations}
+                genres={genresMap}
+              />
+            )}
+
+            <Reviews reviews={tvShowReviews} />
 
             {/* Production Companies */}
             {tvShow.production_companies.length > 0 && (

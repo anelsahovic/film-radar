@@ -37,6 +37,18 @@ export const getMovieById = async (id: string) => {
   return await api.get(`/movie/${id}`);
 };
 
+export const getSimilarMovies = async (movieId: string) => {
+  return await api.get(`/movie/${movieId}/similar`);
+};
+
+export const getMovieRecommendations = async (movieId: string) => {
+  return await api.get(`/movie/${movieId}/recommendations`);
+};
+
+export const getMovieReviews = async (movieId: string) => {
+  return await api.get(`/movie/${movieId}/reviews`);
+};
+
 export const getMovieGenres = async () => {
   return await api.get(`/genre/movie/list`);
 };
