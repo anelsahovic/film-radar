@@ -8,9 +8,10 @@ import {
   getMovieGenres,
   getMovieRecommendations,
   getMovieReviews,
+  getMovieVideos,
   getSimilarMovies,
 } from '@/services/movies.service';
-import type { Genre, Movie, MovieDetails } from '@/types/movies.types';
+import type { Genre, Movie, MovieDetails, Video } from '@/types/movies.types';
 import { formatDate, getYear } from 'date-fns';
 import { useEffect, useState, type JSX } from 'react';
 import {
@@ -25,6 +26,7 @@ import {
   FaExternalLinkAlt,
   FaImdb,
   FaRegCheckCircle,
+  FaYoutube,
 } from 'react-icons/fa';
 import { useParams } from 'react-router';
 import { twMerge } from 'tailwind-merge';
@@ -33,6 +35,7 @@ import ProductionCompanies from '@/components/ProductionCompanies';
 import MoviesCarousel from '@/components/MoviesCarousel';
 import type { Review } from '@/components/ReviewCard';
 import Reviews from '@/components/Reviews';
+import RelatedVideos from '@/components/RelatedVideos';
 
 export default function ShowMovie() {
   const { movieId } = useParams();
@@ -40,6 +43,8 @@ export default function ShowMovie() {
   const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
   const [movieRecommendations, setMovieRecommendations] = useState<Movie[]>([]);
   const [movieReviews, setMovieReviews] = useState<Review[]>([]);
+  const [movieVideos, setMovieVideos] = useState<Video[]>([]);
+  const [movieTrailers, setMovieTrailers] = useState<Video[]>([]);
   const [genresMap, setGenresMap] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -110,10 +115,39 @@ export default function ShowMovie() {
       }
     };
 
+    const fetchMovieVideos = async () => {
+      try {
+        const response = await getMovieVideos(movieId!);
+
+        if (response.status === 200) {
+          setMovieVideos(
+            response.data.results.filter(
+              (video: Video) => video.site.toLowerCase() === 'youtube'
+            )
+          );
+          setMovieTrailers(
+            response.data.results
+              .filter(
+                (video: Video) =>
+                  video.site.toLowerCase() === 'youtube' &&
+                  video.type.toLowerCase() === 'trailer'
+              )
+              .slice(0, 2)
+          );
+        } else {
+          console.log('No movie videos available');
+        }
+      } catch (error) {
+        console.log(error);
+        console.log('No movie videos available');
+      }
+    };
+
     fetchMovie();
     fetchSimilarMovies();
     fetchMovieRecommendations();
     fetchMovieReviews();
+    fetchMovieVideos();
   }, [movieId]);
 
   // fetch movie genres
@@ -233,7 +267,7 @@ export default function ShowMovie() {
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-            <div className="relative container mx-auto px-4 flex flex-col sm:flex-row gap-6 sm:gap-8 pb-6 sm:pb-8 items-center">
+            <div className="relative container mx-auto px-10 flex flex-col sm:flex-row gap-6 sm:gap-8 pb-6 sm:pb-8 items-center">
               {/* Poster */}
               <img
                 src={posterImageUrl}
@@ -293,7 +327,7 @@ export default function ShowMovie() {
                 </div>
 
                 {/* links */}
-                <div className="flex  items-center gap-4 ">
+                <div className="flex items-center gap-4 flex-wrap">
                   {movie.homepage && (
                     <a
                       href={movie.homepage}
@@ -319,6 +353,22 @@ export default function ShowMovie() {
                       IMDb Page
                     </a>
                   )}
+
+                  {/* trailers */}
+                  {movieTrailers.map((trailer, index) => (
+                    <a
+                      key={trailer.id}
+                      href={`https://www.youtube.com/watch?v=${trailer.key}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={twMerge(
+                        buttonVariants({ variant: 'secondary' })
+                      )}
+                    >
+                      <FaYoutube className="size-5 text-red-500" />
+                      Watch Trailer {index + 1}
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
@@ -340,6 +390,9 @@ export default function ShowMovie() {
                 ))}
               </div>
             </section>
+
+            {/* Related videos */}
+            {movieVideos.length > 0 && <RelatedVideos videos={movieVideos} />}
 
             {/* Similar Movies */}
             {similarMovies.length > 0 && (

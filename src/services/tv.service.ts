@@ -46,6 +46,10 @@ export const getTvShowReviews = async (tvId: string) => {
   return await api.get(`/tv/${tvId}/reviews`);
 };
 
+export const getTvShowVideos = async (tvId: string) => {
+  return await api.get(`/tv/${tvId}/videos`);
+};
+
 export const getTvShowGenres = async () => {
   return await api.get('/genre/tv/list');
 };

@@ -2,6 +2,7 @@ import RadialProgress from '@/components/ RadialProgress';
 import ErrorMessage from '@/components/ErrorMessage';
 import Loader from '@/components/Loader';
 import ProductionCompanies from '@/components/ProductionCompanies';
+import RelatedVideos from '@/components/RelatedVideos';
 import type { Review } from '@/components/ReviewCard';
 import Reviews from '@/components/Reviews';
 import SeasonsCollapsible from '@/components/SeasonsCollapsible';
@@ -14,12 +15,13 @@ import {
   getTvShowGenres,
   getTvShowRecommendations,
   getTvShowReviews,
+  getTvShowVideos,
 } from '@/services/tv.service';
-import type { Genre } from '@/types/movies.types';
+import type { Genre, Video } from '@/types/movies.types';
 import type { TvShow, TvShowDetails } from '@/types/tv.types';
 import { getYear } from 'date-fns';
 import { useEffect, useState, type JSX } from 'react';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaYoutube } from 'react-icons/fa';
 import {
   FiActivity,
   FiFilm,
@@ -40,7 +42,8 @@ export default function ShowTvShow() {
     []
   );
   const [tvShowReviews, setTvShowReviews] = useState<Review[]>([]);
-
+  const [tvShowVideos, setTvShowVideos] = useState<Video[]>([]);
+  const [tvShowTrailers, setTvShowTrailers] = useState<Video[]>([]);
   const [genresMap, setGenresMap] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -112,10 +115,39 @@ export default function ShowTvShow() {
       }
     };
 
+    const fetchTvShowVideos = async () => {
+      try {
+        const response = await getTvShowVideos(tvId!);
+
+        if (response.status === 200) {
+          setTvShowVideos(
+            response.data.results.filter(
+              (video: Video) => video.site.toLowerCase() === 'youtube'
+            )
+          );
+          setTvShowTrailers(
+            response.data.results
+              .filter(
+                (video: Video) =>
+                  video.site.toLowerCase() === 'youtube' &&
+                  video.type.toLowerCase() === 'trailer'
+              )
+              .slice(0, 2)
+          );
+        } else {
+          console.log('No tv show videos available');
+        }
+      } catch (error) {
+        console.log(error);
+        console.log('No tv show videos available');
+      }
+    };
+
     fetchTvShow();
     fetchSimilarTvShows();
     fetchTvShowRecommendations();
     fetchTvShowReviews();
+    fetchTvShowVideos();
   }, [tvId]);
 
   // fetch tv show genres
@@ -285,17 +317,35 @@ export default function ShowTvShow() {
                 </div>
 
                 {/* links */}
-                {tvShow.homepage && (
-                  <a
-                    href={tvShow.homepage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={twMerge(buttonVariants())}
-                  >
-                    <FaExternalLinkAlt className="size-4" />
-                    Official Page
-                  </a>
-                )}
+                <div className="flex items-center gap-4 flex-wrap">
+                  {tvShow.homepage && (
+                    <a
+                      href={tvShow.homepage}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={twMerge(buttonVariants())}
+                    >
+                      <FaExternalLinkAlt className="size-4" />
+                      Official Page
+                    </a>
+                  )}
+
+                  {/* trailers */}
+                  {tvShowTrailers.map((trailer, index) => (
+                    <a
+                      key={trailer.id}
+                      href={`https://www.youtube.com/watch?v=${trailer.key}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={twMerge(
+                        buttonVariants({ variant: 'secondary' })
+                      )}
+                    >
+                      <FaYoutube className="size-5 text-red-500" />
+                      Watch Trailer {index + 1}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -324,6 +374,9 @@ export default function ShowTvShow() {
                 </ul>
               </div>
             </section>
+
+            {/* Tv show youtube videos */}
+            {tvShowVideos.length > 0 && <RelatedVideos videos={tvShowVideos} />}
 
             {/* similar tv shows */}
             {similarTvShows.length > 0 && (
