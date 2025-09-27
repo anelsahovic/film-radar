@@ -7,6 +7,7 @@ import People from './pages/People';
 import { ThemeProvider } from './components/ui/theme-provider';
 import ShowMovie from './pages/ShowMovie';
 import ShowTvShow from './pages/ShowTvShow';
+import ShowPerson from './pages/ShowPerson';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="tv-shows/:tvId" element={<ShowTvShow />} />
 
           <Route path="people" element={<People />} />
+          <Route path="person/:personId" element={<ShowPerson />} />
         </Route>
       </Routes>
     </ThemeProvider>

@@ -34,8 +34,8 @@ export default function TvShows() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('query') || '';
   const pageNumber = searchParams.get('page') || '1';
-  const sortingValue = searchParams.get('sort_by') || '';
-  const selectedGenre = searchParams.get('with_genres') || '';
+  const sortingValue = searchParams.get('sort_by') || 'default';
+  const selectedGenre = searchParams.get('with_genres') || 'default';
   const selectedFilter = searchParams.get('filter') || 'all';
 
   // fetch tv shows

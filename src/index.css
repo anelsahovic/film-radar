@@ -57,7 +57,7 @@ body {
   ); /* almost white with a hint of blue */
   --foreground: oklch(0.2 0.015 275); /* deep navy text */
 
-  --card: var(--background);
+  --card: oklch(97.454% 0.01351 295.137);
   --card-foreground: var(--foreground);
 
   --popover: var(--background);
@@ -104,7 +104,7 @@ body {
   --background: oklch(0.15 0.02 275); /* deep navy */
   --foreground: oklch(96.528% 0.01914 298.922); /* off-white text */
 
-  --card: var(--background);
+  --card: oklch(21.225% 0.01374 285.155);
   --card-foreground: var(--foreground);
 
   --popover: var(--background);
