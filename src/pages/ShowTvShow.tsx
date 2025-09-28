@@ -3,7 +3,6 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Loader from '@/components/Loader';
 import ProductionCompanies from '@/components/ProductionCompanies';
 import RelatedVideos from '@/components/RelatedVideos';
-import type { Review } from '@/components/ReviewCard';
 import Reviews from '@/components/Reviews';
 import SeasonsCollapsible from '@/components/SeasonsCollapsible';
 import TvShowsCarousel from '@/components/TvShowsCarousel';
@@ -17,7 +16,7 @@ import {
   getTvShowReviews,
   getTvShowVideos,
 } from '@/services/tv.service';
-import type { Genre, Video } from '@/types/movies.types';
+import type { Genre, Review, Video } from '@/types/shared.types';
 import type { TvShow, TvShowDetails } from '@/types/tv.types';
 import { getYear } from 'date-fns';
 import { useEffect, useState, type JSX } from 'react';

@@ -15,7 +15,8 @@ import {
   getMovieGenres,
   getMovies,
 } from '@/services/movies.service';
-import type { Genre, Movie } from '@/types/movies.types';
+import type { Movie } from '@/types/movies.types';
+import type { Genre } from '@/types/shared.types';
 import { Calendar, Clapperboard, Flame, PlayCircle, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';

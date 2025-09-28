@@ -11,8 +11,9 @@ import {
   getPersonMovieCredits,
   getPersonTvShowCredits,
 } from '@/services/people.service';
-import type { Genre, Movie } from '@/types/movies.types';
+import type { Movie } from '@/types/movies.types';
 import type { PersonDetails } from '@/types/people.types';
+import type { Genre } from '@/types/shared.types';
 import type { TvShow } from '@/types/tv.types';
 import { formatDate } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -200,9 +201,9 @@ export default function ShowPerson() {
               <div className="flex flex-col gap-4 min-w-[250px]">
                 {/* details */}
                 <div className="flex flex-col gap-2">
-                  {details.map((item) => (
+                  {details.map((item, index) => (
                     <div
-                      key={item?.value}
+                      key={index}
                       className="flex justify-between gap-2 border-b border-gray-700 pb-1"
                     >
                       <span className="text-muted-foreground">

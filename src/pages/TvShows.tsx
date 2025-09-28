@@ -14,7 +14,7 @@ import {
   getTvShowsByFilter,
   getTvShowsByQuery,
 } from '@/services/tv.service';
-import type { Genre } from '@/types/movies.types';
+import type { Genre } from '@/types/shared.types';
 import type { TvShow } from '@/types/tv.types';
 import { Calendar, Flame, Star, TrendingUp, Tv } from 'lucide-react';
 import { useEffect, useState } from 'react';

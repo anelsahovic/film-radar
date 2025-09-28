@@ -73,6 +73,7 @@ body {
   --muted: oklch(0.93 0.03 285);
   --muted-foreground: oklch(0.4 0.02 285);
 
+  --accent-loader: oklch(82.393% 0.06717 284.821);
   --accent: var(--secondary);
   --accent-foreground: var(--foreground);
 
@@ -120,6 +121,7 @@ body {
   --muted: oklch(0.25 0.02 285);
   --muted-foreground: oklch(0.7 0.03 285);
 
+  --accent-loader: oklch(31.637% 0.04265 283.694);
   --accent: var(--secondary);
   --accent-foreground: var(--foreground);
 
@@ -237,5 +239,34 @@ body {
   }
   to {
     transform: rotate(0deg);
+  }
+}
+
+.loader-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  border: 10px solid;
+  box-sizing: border-box;
+  animation: animloader 1s linear infinite alternate;
+}
+@keyframes animloader {
+  0% {
+    border-color: var(--accent-loader) rgba(255, 255, 255, 0)
+      rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
+  }
+  33% {
+    border-color: var(--accent-loader) var(--accent-loader)
+      rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
+  }
+  66% {
+    border-color: var(--accent-loader) var(--accent-loader) var(--accent-loader)
+      rgba(255, 255, 255, 0);
+  }
+  100% {
+    border-color: var(--accent-loader) var(--accent-loader) var(--accent-loader)
+      var(--accent-loader);
   }
 }

@@ -1,23 +1,14 @@
-export type TvShow = {
-  adult: boolean;
-  backdrop_path: string | null;
-  genre_ids: number[];
-  id: number;
-  origin_country: string[];
-  original_language: string;
-  original_name: string;
-  overview: string;
-  popularity: number;
-  poster_path: string | null;
-  first_air_date: string;
-  name: string;
-  vote_average: number;
-  vote_count: number;
-};
+import type { BaseMedia } from './shared.types';
 
-export interface TvShowDetails {
-  adult: boolean;
-  backdrop_path: string | null;
+export interface TvShow extends BaseMedia {
+  media_type: 'tv';
+  name: string;
+  original_name: string;
+  first_air_date: string;
+  origin_country: string[];
+}
+
+export interface TvShowDetails extends TvShow {
   created_by: {
     id: number;
     credit_id: string;
@@ -27,13 +18,11 @@ export interface TvShowDetails {
     profile_path: string | null;
   }[];
   episode_run_time: number[];
-  first_air_date: string;
   genres: {
     id: number;
     name: string;
   }[];
   homepage: string;
-  id: number;
   in_production: boolean;
   languages: string[];
   last_air_date: string;
@@ -52,7 +41,6 @@ export interface TvShowDetails {
     show_id: number;
     still_path: string | null;
   } | null;
-  name: string;
   next_episode_to_air: {
     id: number;
     name: string;
@@ -76,12 +64,6 @@ export interface TvShowDetails {
   }[];
   number_of_episodes: number;
   number_of_seasons: number;
-  origin_country: string[];
-  original_language: string;
-  original_name: string;
-  overview: string;
-  popularity: number;
-  poster_path: string | null;
   production_companies: {
     id: number;
     logo_path: string | null;
@@ -110,6 +92,4 @@ export interface TvShowDetails {
   status: string;
   tagline: string;
   type: string;
-  vote_average: number;
-  vote_count: number;
 }

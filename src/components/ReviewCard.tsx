@@ -1,19 +1,7 @@
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { FaStar } from 'react-icons/fa';
-
-export interface Review {
-  author: string;
-  author_details: {
-    name: string;
-    username: string;
-    avatar_path: string | null;
-    rating: number | null;
-  };
-  content: string;
-  created_at: string;
-  url: string;
-}
+import type { Review } from '@/types/shared.types';
 
 export default function ReviewCard({ review }: { review: Review }) {
   const { author, author_details, content, created_at, url } = review;

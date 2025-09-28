@@ -1,4 +1,3 @@
-import type { Video } from '@/types/movies.types';
 import {
   Carousel,
   CarouselContent,
@@ -8,6 +7,7 @@ import {
 } from './ui/carousel';
 import { FaYoutube } from 'react-icons/fa';
 import { formatDistanceToNow } from 'date-fns';
+import type { Video } from '@/types/shared.types';
 
 type Props = {
   videos: Video[];

@@ -56,3 +56,7 @@ export const getMovieVideos = async (movieId: string) => {
 export const getMovieGenres = async () => {
   return await api.get(`/genre/movie/list`);
 };
+
+export const getAllTrendingMedia = async (timeWindow: 'day' | 'week') => {
+  return await api.get(`/trending/all/${timeWindow}`);
+};

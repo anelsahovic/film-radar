@@ -11,7 +11,7 @@ import {
   getMovieVideos,
   getSimilarMovies,
 } from '@/services/movies.service';
-import type { Genre, Movie, MovieDetails, Video } from '@/types/movies.types';
+import type { Movie, MovieDetails } from '@/types/movies.types';
 import { formatDate, getYear } from 'date-fns';
 import { useEffect, useState, type JSX } from 'react';
 import {
@@ -33,9 +33,9 @@ import { twMerge } from 'tailwind-merge';
 import { intervalToDuration } from 'date-fns';
 import ProductionCompanies from '@/components/ProductionCompanies';
 import MoviesCarousel from '@/components/MoviesCarousel';
-import type { Review } from '@/components/ReviewCard';
 import Reviews from '@/components/Reviews';
 import RelatedVideos from '@/components/RelatedVideos';
+import type { Genre, Review, Video } from '@/types/shared.types';
 
 export default function ShowMovie() {
   const { movieId } = useParams();
