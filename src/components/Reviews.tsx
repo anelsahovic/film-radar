@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import type { Review } from './ReviewCard';
 import {
   Collapsible,
   CollapsibleContent,
@@ -9,6 +8,7 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import ReviewCard from './ReviewCard';
+import type { Review } from '@/types/shared.types';
 
 type Props = {
   reviews: Review[];

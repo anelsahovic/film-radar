@@ -6,7 +6,7 @@ export default function HomeHeroSkeleton() {
       <Skeleton className="w-full h-full absolute inset-0 bg-accent/45" />
 
       {/* left */}
-      <div className="relative col-span-3 md:col-span-2 flex flex-col justify-end md:justify-center gap-6 px-10 py-10 md:py-2 z-10">
+      <div className="relative col-span-3 md:col-span-2 flex flex-col justify-end md:justify-center gap-6 px-10 py-10 md:py-2 z-10 overflow-hidden">
         {/* title */}
         <div className="flex flex-col gap-2">
           <Skeleton className="h-6 w-20 rounded-full" />
@@ -28,14 +28,14 @@ export default function HomeHeroSkeleton() {
           </div>
 
           {/* release/first air date */}
-          <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-2 ">
             <Skeleton className="size-6 rounded-full" />
             <Skeleton className="h-3 w-12" />
           </div>
         </div>
 
         {/* overview */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 overflow-hidden">
           <Skeleton className="h-3 w-[400px]" />
           <Skeleton className="h-3 w-[400px]" />
           <Skeleton className="h-3 w-[400px]" />
@@ -45,7 +45,7 @@ export default function HomeHeroSkeleton() {
         <div className="flex items-center gap-4 flex-wrap">
           <Skeleton className="h-8 w-20 rounded-full" />
           <Skeleton className="h-8 w-20 rounded-full" />
-          <Skeleton className="h-8 w-20 rounded-full" />
+          <Skeleton className="hidden sm:flex h-8 w-20 rounded-full" />
         </div>
 
         {/* action */}
