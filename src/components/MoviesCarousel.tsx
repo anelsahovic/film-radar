@@ -33,10 +33,7 @@ export default function MoviesCarousel({
         >
           <CarouselContent>
             {movies.map((movie) => (
-              <CarouselItem
-                key={movie.id}
-                className="sm:basis-1/2 md:basis-1/3 lg:basis-1/5"
-              >
+              <CarouselItem key={movie.id} className="max-w-[250px]">
                 <MovieCard movie={movie} genres={genres} />
               </CarouselItem>
             ))}

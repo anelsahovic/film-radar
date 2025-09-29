@@ -33,10 +33,7 @@ export default function TvShowsCarousel({
         >
           <CarouselContent>
             {tvShows.map((tvShow) => (
-              <CarouselItem
-                key={tvShow.id}
-                className="sm:basis-1/2 md:basis-1/3 lg:basis-1/5"
-              >
+              <CarouselItem key={tvShow.id} className="max-w-[250px]">
                 <TvShowCard tvShow={tvShow} genres={genres} />
               </CarouselItem>
             ))}
