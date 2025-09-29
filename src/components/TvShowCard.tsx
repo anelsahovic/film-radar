@@ -13,7 +13,7 @@ export default function TvShowCard({ tvShow, genres }: Props) {
   return (
     <Link
       to={`/tv-shows/${tvShow.id}`}
-      className="relative group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-background "
+      className="relative block group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-background "
     >
       {/* Poster */}
       <img

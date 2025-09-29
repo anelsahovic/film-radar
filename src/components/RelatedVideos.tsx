@@ -40,7 +40,7 @@ export default function RelatedVideos({ videos }: Props) {
                   />
 
                   {/* Play button overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40" />
+                  <div className="absolute inset-0 top-0 h-48 flex items-center justify-center bg-black/40" />
                   <FaYoutube className="absolute left-1/2 -translate-x-1/2 top-20 size-12 z-20 text-red-500 drop-shadow-lg group-hover:text-red-700 transition-all duration-300" />
                   <div className="absolute left-1/2 -translate-x-1/2 top-24 size-4 bg-neutral-100" />
 
@@ -52,10 +52,14 @@ export default function RelatedVideos({ videos }: Props) {
                     </h3>
 
                     {/* Meta row */}
-                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                      <span className="rounded-md bg-muted">{video.type}</span>
+                    <div className="flex  items-center gap-2 text-[11px] text-muted-foreground">
+                      <span className="truncate">{video.type}</span>
                       <span>{video.size}p</span>
-                      <span>{formatDistanceToNow(video.published_at)}</span>
+                      <span className="truncate">
+                        {formatDistanceToNow(video.published_at, {
+                          addSuffix: true,
+                        })}
+                      </span>
                       {video.official && (
                         <span className="text-primary font-medium">
                           Official

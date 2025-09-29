@@ -14,7 +14,7 @@ export default function MovieCard({ movie, genres }: Props) {
   return (
     <Link
       to={`/movies/${movie.id}`}
-      className="relative group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-background"
+      className="relative group block rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-background"
     >
       {/* Poster */}
       <img
