@@ -1,4 +1,6 @@
 import RadialProgress from '@/components/ RadialProgress';
+import AddToFavorites from '@/components/AddToFavorites';
+import AddToWatchlist from '@/components/AddToWatchlist';
 import ErrorMessage from '@/components/ErrorMessage';
 import Loader from '@/components/Loader';
 import ProductionCompanies from '@/components/ProductionCompanies';
@@ -313,6 +315,12 @@ export default function ShowTvShow() {
                       {genre.name}
                     </span>
                   ))}
+                </div>
+
+                {/* action */}
+                <div className="flex items-center gap-4 flex-wrap">
+                  <AddToWatchlist media={tvShow} media_type="tv" />
+                  <AddToFavorites media={tvShow} media_type="tv" />
                 </div>
 
                 {/* links */}

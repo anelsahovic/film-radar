@@ -200,7 +200,9 @@ export default function TvShows() {
   ];
   return (
     <div className="flex flex-col gap-8 p-4 my-4">
-      <title>Film Radar - TV Shows</title>
+      <title>
+        TV Shows - Film Radar - Discover movies, TV shows, and people.
+      </title>
       {/* search */}
       <div className="flex w-full justify-center px-4">
         <Search

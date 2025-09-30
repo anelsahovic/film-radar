@@ -4,7 +4,7 @@ import Footer from './components/Footer';
 
 export default function Layout() {
   return (
-    <div>
+    <div className="h-dvh flex flex-col justify-between">
       <Navbar />
 
       <main>

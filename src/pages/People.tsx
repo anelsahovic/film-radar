@@ -65,7 +65,9 @@ export default function People() {
 
   return (
     <div className="flex flex-col gap-8 p-4 my-4">
-      <title>Film Radar - Famous People</title>
+      <title>
+        Famous People - Film Radar - Discover movies, TV shows, and people.
+      </title>
       {/* search */}
       <div className="flex w-full justify-center px-4">
         <Search

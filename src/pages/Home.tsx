@@ -1,10 +1,12 @@
+import AddToFavorites from '@/components/AddToFavorites';
+import AddToWatchlist from '@/components/AddToWatchlist';
 import CarouselSkeleton from '@/components/CarouselSkeleton';
 import ErrorMessage from '@/components/ErrorMessage';
 import HomeHeroSkeleton from '@/components/HomeHeroSkeleton';
 import MoviesCarousel from '@/components/MoviesCarousel';
 import TvShowsCarousel from '@/components/TvShowsCarousel';
 import { Badge } from '@/components/ui/badge';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   getAllTrendingMedia,
   getMovieGenres,
@@ -12,10 +14,10 @@ import {
 } from '@/services/movies.service';
 import { getTvShowGenres, getTvShowsByFilter } from '@/services/tv.service';
 import type { Movie } from '@/types/movies.types';
-import type { AllTrendingMedia, Genre } from '@/types/shared.types';
+import type { Media, Genre } from '@/types/shared.types';
 import type { TvShow } from '@/types/tv.types';
 import { formatDate, getYear } from 'date-fns';
-import { Heart, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FaPlay } from 'react-icons/fa6';
 import { FiCalendar, FiStar, FiTv } from 'react-icons/fi';
@@ -23,7 +25,7 @@ import { MdOutlineLocalMovies } from 'react-icons/md';
 import { twMerge } from 'tailwind-merge';
 
 export default function Home() {
-  const [trendingMedia, setTrendingMedia] = useState<AllTrendingMedia[]>([]);
+  const [trendingMedia, setTrendingMedia] = useState<Media[]>([]);
   const [trendingMediaActiveIndex, setTrendingMediaActiveIndex] = useState(0);
   const [trendingMediaLoading, setTrendingMediaLoading] = useState(true);
   const [trendingMediaError, setTrendingMediaError] = useState('');
@@ -64,7 +66,7 @@ export default function Home() {
         if (response.status === 200) {
           setTrendingMedia(
             response.data.results.filter(
-              (media: AllTrendingMedia) =>
+              (media: Media) =>
                 media.media_type === 'movie' || media.media_type === 'tv'
             )
           );
@@ -350,7 +352,7 @@ export default function Home() {
               </div>
 
               {/* actions */}
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4">
                 <a
                   href={
                     activeTrendingMedia?.media_type === 'movie'
@@ -359,21 +361,21 @@ export default function Home() {
                   }
                   className={twMerge(
                     buttonVariants({ size: 'lg' }),
-                    'sm:text-base uppercase transition-transform hover:scale-105 duration-300'
+                    ' uppercase transition-transform hover:scale-105 duration-300'
                   )}
                 >
-                  <Play className="size-5" />
+                  <Play className="size-4" />
                   Details
                 </a>
 
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  className="sm:text-base uppercase transition-transform hover:scale-105 duration-300"
-                >
-                  <Heart className="size-5" />
-                  <span className="hidden sm:flex">Add To Favorites</span>
-                </Button>
+                <AddToWatchlist
+                  media={activeTrendingMedia}
+                  media_type={activeTrendingMedia.media_type}
+                />
+                <AddToFavorites
+                  media={activeTrendingMedia}
+                  media_type={activeTrendingMedia.media_type}
+                />
               </div>
             </div>
 
@@ -388,14 +390,14 @@ export default function Home() {
                   <div key={item?.id} className="flex items-end">
                     {/* Poster */}
                     <img
-                      className="h-48 w-auto rounded-lg rounded-br-none object-cover shadow-md"
+                      className="hidden lg:block h-48 w-auto rounded-lg rounded-br-none object-cover shadow-md"
                       src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
                       alt={item.media_type === 'movie' ? item.title : item.name}
                     />
 
                     {/* Details */}
                     <div
-                      className="h-40 flex-1 rounded-r-lg relative flex flex-col justify-between gap-2 p-3 overflow-hidden shadow-md"
+                      className="h-40 flex-1  rounded-lg lg:rounded-l-none relative flex flex-col justify-between gap-2 p-3 overflow-hidden shadow-md"
                       style={{
                         backgroundImage: `url(https://image.tmdb.org/t/p/w780${item.backdrop_path})`,
                         backgroundSize: 'cover',
@@ -443,7 +445,7 @@ export default function Home() {
                           Details
                         </a>
 
-                        <div className="flex items-center gap-1 text-white text-sm uppercase">
+                        <div className="flex items-center gap-1 text-white text-xs uppercase">
                           <FiCalendar className="size-4" />
                           <span>
                             {formatDate(

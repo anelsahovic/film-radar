@@ -36,6 +36,8 @@ import MoviesCarousel from '@/components/MoviesCarousel';
 import Reviews from '@/components/Reviews';
 import RelatedVideos from '@/components/RelatedVideos';
 import type { Genre, Review, Video } from '@/types/shared.types';
+import AddToFavorites from '@/components/AddToFavorites';
+import AddToWatchlist from '@/components/AddToWatchlist';
 
 export default function ShowMovie() {
   const { movieId } = useParams();
@@ -324,6 +326,12 @@ export default function ShowMovie() {
                   <p className="text-muted-foreground leading-relaxed">
                     {movie.overview}
                   </p>
+                </div>
+
+                {/* action */}
+                <div className="flex items-center gap-4 flex-wrap">
+                  <AddToWatchlist media={movie} media_type="movie" />
+                  <AddToFavorites media={movie} media_type="movie" />
                 </div>
 
                 {/* links */}

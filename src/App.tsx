@@ -8,6 +8,8 @@ import { ThemeProvider } from './components/ui/theme-provider';
 import ShowMovie from './pages/ShowMovie';
 import ShowTvShow from './pages/ShowTvShow';
 import ShowPerson from './pages/ShowPerson';
+import Favorites from './pages/Favorites';
+import Watchlist from './pages/Watchlist';
 
 function App() {
   return (
@@ -24,6 +26,9 @@ function App() {
 
           <Route path="people" element={<People />} />
           <Route path="person/:personId" element={<ShowPerson />} />
+
+          <Route path="favorites" element={<Favorites />} />
+          <Route path="watchlist" element={<Watchlist />} />
         </Route>
       </Routes>
     </ThemeProvider>

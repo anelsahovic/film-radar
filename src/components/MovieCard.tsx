@@ -14,7 +14,7 @@ export default function MovieCard({ movie, genres }: Props) {
   return (
     <Link
       to={`/movies/${movie.id}`}
-      className="relative group block rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-background"
+      className="relative group block rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-background "
     >
       {/* Poster */}
       <img
@@ -44,14 +44,25 @@ export default function MovieCard({ movie, genres }: Props) {
         </div>
 
         <div className="mt-2 flex items-center gap-1.5">
-          {movie.genre_ids.map((id) => (
-            <span
-              key={id}
-              className="font-semibold text-xs text-white px-2 py-1 rounded-full bg-neutral-500/50 backdrop-blur-lg"
-            >
-              {genres[id]}
-            </span>
-          ))}
+          {movie.genre_ids
+            ? movie.genre_ids.map((id) => (
+                <span
+                  key={id}
+                  className="font-semibold text-xs text-white px-2 py-1 rounded-full bg-neutral-500/50 backdrop-blur-lg"
+                >
+                  {genres[id]}
+                </span>
+              ))
+            : movie?.genres!.map((genre) => (
+                <span
+                  key={genre.id}
+                  className="font-semibold text-xs text-white px-2 py-1 rounded-full bg-neutral-500/50 backdrop-blur-lg"
+                >
+                  {genres[genre.id]}
+                </span>
+              ))}
+
+          {}
         </div>
       </div>
 

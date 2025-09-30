@@ -8,8 +8,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from './ui/sheet';
-import { Button } from './ui/button';
+import { Button, buttonVariants } from './ui/button';
 import { IoFilm, IoHome, IoMenu, IoPeople, IoTv } from 'react-icons/io5';
+import { Eye, Heart } from 'lucide-react';
+import { twMerge } from 'tailwind-merge';
+import { FaEye, FaHeart } from 'react-icons/fa6';
 
 export default function Navbar() {
   return (
@@ -89,8 +92,32 @@ export default function Navbar() {
 
         {/* Right side (theme toggle, sheet for mobile) */}
         <div className="flex justify-end items-center gap-2 md:w-[200px]">
-          <div className="hidden sm:flex">
+          <div className="hidden sm:flex items-center gap-2">
             <ModeToggle />
+
+            <NavLink
+              to="/favorites"
+              className={({ isActive }) =>
+                twMerge(
+                  buttonVariants({ variant: 'outline', size: 'icon' }),
+                  isActive ? 'text-primary' : ''
+                )
+              }
+            >
+              <Heart />
+            </NavLink>
+
+            <NavLink
+              to="/watchlist"
+              className={({ isActive }) =>
+                twMerge(
+                  buttonVariants({ variant: 'outline', size: 'icon' }),
+                  isActive ? 'text-primary' : ''
+                )
+              }
+            >
+              <Eye />
+            </NavLink>
           </div>
 
           <Sheet>
@@ -182,6 +209,30 @@ export default function Navbar() {
                   >
                     <IoPeople className="size-5" />
                     People
+                  </NavLink>
+
+                  <NavLink
+                    to="/favorites"
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 transition-colors hover:text-primary ${
+                        isActive ? 'text-primary' : 'text-foreground'
+                      }`
+                    }
+                  >
+                    <FaHeart className="size-5" />
+                    Favorites
+                  </NavLink>
+
+                  <NavLink
+                    to="/watchlist"
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 transition-colors hover:text-primary ${
+                        isActive ? 'text-primary' : 'text-foreground'
+                      }`
+                    }
+                  >
+                    <FaEye className="size-5" />
+                    Watchlist
                   </NavLink>
                 </nav>
               </div>

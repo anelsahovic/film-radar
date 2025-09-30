@@ -9,7 +9,8 @@ export interface BaseMedia {
   poster_path: string | null;
   media_type: 'movie' | 'tv';
   original_language: string;
-  genre_ids: number[];
+  genre_ids?: number[];
+  genres?: { id: number; name: string }[];
   popularity: number;
   vote_average: number;
   vote_count: number;
@@ -44,4 +45,4 @@ export interface Review {
   url: string;
 }
 
-export type AllTrendingMedia = Movie | TvShow;
+export type Media = Movie | TvShow;

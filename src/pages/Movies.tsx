@@ -205,7 +205,9 @@ export default function Movies() {
 
   return (
     <div className="flex flex-col gap-8 p-4 my-4">
-      <title>Film Radar - Movies</title>
+      <title>
+        Movies - Film Radar - Discover movies, TV shows, and people.
+      </title>
       {/* search */}
       <div className="flex justify-center w-full px-4">
         <Search

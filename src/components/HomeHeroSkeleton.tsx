@@ -50,8 +50,9 @@ export default function HomeHeroSkeleton() {
 
         {/* action */}
         <div className="flex items-center gap-6">
-          <Skeleton className="h-10 w-32 " />
-          <Skeleton className="h-10 w-44 " />
+          <Skeleton className="h-10 w-28 " />
+          <Skeleton className="h-9 w-36 " />
+          <Skeleton className="h-9 w-36 " />
         </div>
       </div>
 

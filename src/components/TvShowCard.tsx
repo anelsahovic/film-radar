@@ -43,14 +43,23 @@ export default function TvShowCard({ tvShow, genres }: Props) {
         </div>
 
         <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-          {tvShow.genre_ids.map((id) => (
-            <span
-              key={id}
-              className="font-semibold text-xs text-white px-2 py-1 rounded-full bg-neutral-500/50 backdrop-blur-lg"
-            >
-              {genres[id]}
-            </span>
-          ))}
+          {tvShow.genre_ids
+            ? tvShow.genre_ids.map((id) => (
+                <span
+                  key={id}
+                  className="font-semibold text-xs text-white px-2 py-1 rounded-full bg-neutral-500/50 backdrop-blur-lg"
+                >
+                  {genres[id]}
+                </span>
+              ))
+            : tvShow.genres!.map((genre) => (
+                <span
+                  key={genre.id}
+                  className="font-semibold text-xs text-white px-2 py-1 rounded-full bg-neutral-500/50 backdrop-blur-lg"
+                >
+                  {genres[genre.id]}
+                </span>
+              ))}
         </div>
       </div>
 
