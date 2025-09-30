@@ -86,13 +86,15 @@ export default function Watchlist() {
         </div>
 
         {/* clear all  */}
-        <Button
-          onClick={clearWatchlist}
-          variant="outline"
-          className="cursor-pointer"
-        >
-          <Trash /> Clear All
-        </Button>
+        {watchlist.length > 0 && (
+          <Button
+            onClick={clearWatchlist}
+            variant="outline"
+            className="cursor-pointer"
+          >
+            <Trash /> Clear All
+          </Button>
+        )}
       </div>
 
       {/* Media cards */}

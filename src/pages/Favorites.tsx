@@ -86,13 +86,15 @@ export default function Favorites() {
         </div>
 
         {/* clear all  */}
-        <Button
-          onClick={clearFavorites}
-          variant="outline"
-          className="cursor-pointer"
-        >
-          <Trash /> Clear All
-        </Button>
+        {favorites.length > 0 && (
+          <Button
+            onClick={clearFavorites}
+            variant="outline"
+            className="cursor-pointer"
+          >
+            <Trash /> Clear All
+          </Button>
+        )}
       </div>
 
       {/* Media cards */}

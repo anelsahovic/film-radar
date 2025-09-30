@@ -13,8 +13,20 @@ import { IoFilm, IoHome, IoMenu, IoPeople, IoTv } from 'react-icons/io5';
 import { Eye, Heart } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import { FaEye, FaHeart } from 'react-icons/fa6';
+import { useState } from 'react';
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+
+  const navLinks = [
+    { to: '/', label: 'Home', Icon: IoHome },
+    { to: '/movies', label: 'Movies', Icon: IoFilm },
+    { to: '/tv-shows', label: 'TV Shows', Icon: IoTv },
+    { to: '/people', label: 'People', Icon: IoPeople },
+    { to: '/favorites', label: 'Favorites', Icon: FaHeart },
+    { to: '/watchlist', label: 'Watchlist', Icon: FaEye },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/70 backdrop-blur-md">
       <div className=" mx-auto flex justify-between items-center sm:grid-cols-3 h-16 px-4">
@@ -37,57 +49,21 @@ export default function Navbar() {
 
         {/* Nav links */}
         <nav className="hidden sm:flex items-center justify-center gap-6 font-medium">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `transition-colors py-5 hover:text-primary ${
-                isActive
-                  ? 'text-primary font-bold border-b border-primary'
-                  : 'text-foreground'
-              }`
-            }
-          >
-            Home
-          </NavLink>
-
-          <NavLink
-            to="/movies"
-            className={({ isActive }) =>
-              `transition-colors py-5 hover:text-primary ${
-                isActive
-                  ? 'text-primary font-bold border-b border-primary'
-                  : 'text-foreground'
-              }`
-            }
-          >
-            Movies
-          </NavLink>
-
-          <NavLink
-            to="/tv-shows"
-            className={({ isActive }) =>
-              `transition-colors py-5 hover:text-primary ${
-                isActive
-                  ? 'text-primary font-bold border-b border-primary'
-                  : 'text-foreground'
-              }`
-            }
-          >
-            TV Shows
-          </NavLink>
-
-          <NavLink
-            to="/people"
-            className={({ isActive }) =>
-              `transition-colors py-5 hover:text-primary ${
-                isActive
-                  ? 'text-primary font-bold border-b border-primary'
-                  : 'text-foreground'
-              }`
-            }
-          >
-            People
-          </NavLink>
+          {navLinks.slice(0, 4).map((link) => (
+            <NavLink
+              to={link.to}
+              key={link.to}
+              className={({ isActive }) =>
+                `transition-colors py-5 hover:text-primary ${
+                  isActive
+                    ? 'text-primary font-bold border-b border-primary'
+                    : 'text-foreground'
+                }`
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
         </nav>
 
         {/* Right side (theme toggle, sheet for mobile) */}
@@ -120,7 +96,8 @@ export default function Navbar() {
             </NavLink>
           </div>
 
-          <Sheet>
+          {/* mobile sidebar */}
+          <Sheet open={open} onOpenChange={setOpen}>
             {/* Hamburger Trigger */}
             <SheetTrigger asChild>
               <Button
@@ -163,77 +140,21 @@ export default function Navbar() {
 
                 {/* Navigation Links */}
                 <nav className="flex flex-col gap-5 text-lg font-medium">
-                  <NavLink
-                    to="/"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 transition-colors hover:text-primary ${
-                        isActive ? 'text-primary' : 'text-foreground'
-                      }`
-                    }
-                  >
-                    <IoHome className="size-5" />
-                    Home
-                  </NavLink>
-
-                  <NavLink
-                    to="/movies"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 transition-colors hover:text-primary ${
-                        isActive ? 'text-primary' : 'text-foreground'
-                      }`
-                    }
-                  >
-                    <IoFilm className="size-5" />
-                    Movies
-                  </NavLink>
-
-                  <NavLink
-                    to="/tv-shows"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 transition-colors hover:text-primary ${
-                        isActive ? 'text-primary' : 'text-foreground'
-                      }`
-                    }
-                  >
-                    <IoTv className="size-5" />
-                    TV Shows
-                  </NavLink>
-
-                  <NavLink
-                    to="/people"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 transition-colors hover:text-primary ${
-                        isActive ? 'text-primary' : 'text-foreground'
-                      }`
-                    }
-                  >
-                    <IoPeople className="size-5" />
-                    People
-                  </NavLink>
-
-                  <NavLink
-                    to="/favorites"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 transition-colors hover:text-primary ${
-                        isActive ? 'text-primary' : 'text-foreground'
-                      }`
-                    }
-                  >
-                    <FaHeart className="size-5" />
-                    Favorites
-                  </NavLink>
-
-                  <NavLink
-                    to="/watchlist"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 transition-colors hover:text-primary ${
-                        isActive ? 'text-primary' : 'text-foreground'
-                      }`
-                    }
-                  >
-                    <FaEye className="size-5" />
-                    Watchlist
-                  </NavLink>
+                  {navLinks.map(({ to, label, Icon }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 transition-colors hover:text-primary ${
+                          isActive ? 'text-primary' : 'text-foreground'
+                        }`
+                      }
+                      onClick={() => setOpen(false)}
+                    >
+                      <Icon className="size-5" />
+                      {label}
+                    </NavLink>
+                  ))}
                 </nav>
               </div>
 
